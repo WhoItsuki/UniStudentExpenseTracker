@@ -41,7 +41,7 @@
                     Login
                 </button>
             </form><br>
-            <p class="text-center">Don't have account? <a href="">Sign up</a></p>
+            <p class="text-center">Don't have account? <a href="signupStudent">Sign up</a></p>
             <div class="text-center mt-4 text-gray-500">
                 <a href="loginAdmin" class="no-underline hover:underline text-blue-600">
                 <p>Login as Administrator</p>

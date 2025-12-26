@@ -19,12 +19,12 @@
             <form action="#" method="POST">
                 @csrf
                 <div class="mb-4">
-                    <label for="student_id" class="block text-gray-700 text-sm font-medium mb-2">Student ID</label>
+                    <label for="student_id" class="block text-gray-700 text-sm font-medium mb-2">Admin ID</label>
                     <input type="text" 
-                           id="staffID" 
-                           name="staffID" 
+                           id="adminID" 
+                           name="adminID" 
                            class="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
-                           placeholder="Enter your staff ID" 
+                           placeholder="Enter your admin ID" 
                            required>
                 </div>
                 <div class="mb-6">
