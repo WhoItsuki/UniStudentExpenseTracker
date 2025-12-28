@@ -7,11 +7,14 @@
     <link href="https://unpkg.com/tailwindcss@1.9.6/dist/tailwind.min.css" rel="stylesheet"> 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ asset('js/chart.js') }}" defer></script>
+
     <title>Student Dashboard</title>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen">
-        <nav class="bg-white shadow-md">
+        <nav class="bg-white shadow-md fixed-top">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
@@ -31,7 +34,7 @@
                 </div>
             </div>
         </nav>
-        
+        <br><br>
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap">
             <div class="px-4 py-6 sm:px-0 w-full">
                 <div class="bg-white rounded-lg shadow p-6">
@@ -43,9 +46,16 @@
                             <h1 class="text-center text-xl">Stats</h1>
                         </div>
                         <div class="w-50 flex flex-col gap-5">
-                            <div class="h-25 border-1 rounded-2 hover:shadow-lg">Expenses</div>
-                            <div class="h-25 border-1 rounded-2 hover:shadow-lg">Income</div>
-                            <div class="h-25 border-1 rounded-2 hover:shadow-lg">Budget</div>
+                            <div class="h-25 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col">
+                                <h1 class="text-center text-xl">Expense</h1>
+                                <canvas id="expenseChart" style="width:100%;max-width:600px"></canvas>
+                            </div>
+                            <div class="h-25 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col">
+                                <h1 class="text-center text-xl">Income</h1>
+                            </div>
+                            <div class="h-25 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col">
+                                <h1 class="text-center text-xl">Budget</h1>
+                            </div>
                         </div>
                     </div>
 

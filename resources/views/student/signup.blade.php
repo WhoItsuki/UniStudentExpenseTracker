@@ -27,7 +27,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('student.signup') }}" method="POST">
+            <form action="" method="POST">
                 @csrf
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-medium mb-2">First Name</label>
@@ -76,7 +76,7 @@
                     Sign Up
                 </button>
             </form><br>
-            <p class="text-center">Already have account? <a href="{{ route('student.login.get') }}">Login</a></p>
+            <p class="text-center">Already have account? <a href="/logimStudent">Login</a></p>
             <div class="text-center mt-4 text-gray-500">
                 <a href="/loginAdmin" class="no-underline hover:underline text-blue-600">
                 <p>Login as Administrator</p>
