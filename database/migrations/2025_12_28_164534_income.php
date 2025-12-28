@@ -11,7 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('income', function (Blueprint $table) {
+            $table->id('incomeID');
+            $table->string('incomeName');
+            $table->double('incomeAmount');
+            $table->date('incomeDate');
+            $table->foreignId('studentID');
+            $table->timestamps();
+        });
     }
 
     /**
