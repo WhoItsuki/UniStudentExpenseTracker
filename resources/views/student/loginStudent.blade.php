@@ -46,6 +46,7 @@
             <div class="text-center mt-4 text-gray-500">
                 <a href="/loginAdmin" class="no-underline hover:underline text-blue-600">
                 <p>Login as Administrator</p>
+                
                 </a>
             </div>
         </div><br>

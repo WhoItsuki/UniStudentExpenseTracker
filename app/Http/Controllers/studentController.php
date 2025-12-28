@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class studentController extends Controller
 {
@@ -18,8 +20,6 @@ class studentController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        // Hash the password before saving
-        $validatedData['password'] = bcrypt($validatedData['password']);
         Student::create($validatedData);// Save the new student to the database
         
         return redirect()->route('student.login.get')->with('success', 'Registration successful! Please login.');
@@ -33,16 +33,28 @@ class studentController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Attempt to find the student by studentID
-        $student = Student::where('studentID', $credentials['studentID'])->first();
-
-        if ($student && password_verify($credentials['password'], $student->password)) {
-            // Authentication passed - store student in session
-            session(['student_id' => $student->id, 'student_name' => $student->studentFname . ' ' . $student->studentLname]);
+        if (Auth::guard('student')->attempt($credentials)) {
+            // Authentication passed - regenerate session for security
+            $request->session()->regenerate();
+            
+            // Store student name in session for display
+            $student = Auth::guard('student')->user();
+            session(['student_name' => $student->studentFname . ' ' . $student->studentLname]);
+            
             return redirect()->route('student.dashboard');
         } else {
             // Authentication failed
             return back()->withErrors(['studentID' => 'Invalid student ID or password.'])->withInput($request->except('password'));
         }
+    }
+        
+
+    public function logout(Request $request)
+    {
+        Auth::guard('student')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        
+        return redirect()->route('student.login.get')->with('success', 'You have been logged out successfully.');
     }
 }

@@ -18,22 +18,42 @@
                         <h1 class="text-xl font-bold text-gray-800">Student Expense Tracker</h1>
                     </div>
                     <div class="flex items-center">
-                        @if(session('student_name'))
-                            <span class="text-gray-700 mr-4">Welcome, {{ session('student_name') }}</span>
-                        @endif
-                        <a href="{{ route('student.login.get') }}" class="text-blue-600 hover:text-blue-800">Logout</a>
+                        <ol class="flex items-center gap-20 list-none m-0 p-0">
+                            <li class="m-0 p-0"><a href="" class="text-blue-600 no-underline hover:text-blue-800 hover:underline">Profile</a></li>
+                            <li class="m-0 p-0"><a href="" class="text-blue-600 no-underline hover:text-blue-800 hover:underline">Expenses</a></li>
+                            <li class="m-0 p-0"><a href="" class="text-blue-600 no-underline hover:text-blue-800 hover:underline">Budgets</a></li>
+                            <li class="m-0 p-0"><a href="" class="text-blue-600 no-underline hover:text-blue-800 hover:underline">Income</a></li>
+                        </ol>
+                    </div>
+                    <div class="flex items-center">
+                            <a href="#" class="text-red-600 hover:text-red-800">Logout</a>
                     </div>
                 </div>
             </div>
         </nav>
         
-        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <div class="px-4 py-6 sm:px-0">
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap">
+            <div class="px-4 py-6 sm:px-0 w-full">
                 <div class="bg-white rounded-lg shadow p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Dashboard</h2>
-                    <p class="text-gray-600">Welcome to your expense tracking dashboard. This is where you can manage your expenses.</p>
+                    <p class="text-gray-600">Welcome to your expense tracking dashboard. This is where you can manage your financials.</p>
+
+                    <div class="m-2 flex items-center gap-5">
+                        <div class="w-50 h-100 border-1 rounded-2 hover:shadow-lg p-2">
+                            <h1 class="text-center text-xl">Stats</h1>
+                        </div>
+                        <div class="w-50 flex flex-col gap-5">
+                            <div class="h-25 border-1 rounded-2 hover:shadow-lg">Expenses</div>
+                            <div class="h-25 border-1 rounded-2 hover:shadow-lg">Income</div>
+                            <div class="h-25 border-1 rounded-2 hover:shadow-lg">Budget</div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
+
+            
         </main>
     </div>
 </body>
