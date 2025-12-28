@@ -42,7 +42,7 @@
                 </button>
             </form>
             <div class="text-center mt-4 text-gray-500">
-                <a href="loginStudent" class="no-underline hover:underline text-blue-600">
+                <a href="/loginStudent" class="no-underline hover:underline text-blue-600">
                 <p>Login as Student</p>
                 </a>
             </div>

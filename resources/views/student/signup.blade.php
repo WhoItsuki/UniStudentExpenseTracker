@@ -16,7 +16,18 @@
     <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Student Sign up</h1>
-            <form action="#" method="POST">
+            
+            @if ($errors->any())
+                <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('student.signup') }}" method="POST">
                 @csrf
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-medium mb-2">First Name</label>
@@ -62,12 +73,12 @@
 
                 <button type="submit" 
                         class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium">
-                    Login
+                    Sign Up
                 </button>
             </form><br>
-            <p class="text-center">Already have account? <a href="loginStudent">Login</a></p>
+            <p class="text-center">Already have account? <a href="{{ route('student.login.get') }}">Login</a></p>
             <div class="text-center mt-4 text-gray-500">
-                <a href="loginAdmin" class="no-underline hover:underline text-blue-600">
+                <a href="/loginAdmin" class="no-underline hover:underline text-blue-600">
                 <p>Login as Administrator</p>
                 </a>
             </div>

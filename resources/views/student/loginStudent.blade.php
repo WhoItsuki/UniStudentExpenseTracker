@@ -13,7 +13,8 @@
     <title>Login</title>
 </head>
 <body class="bg-gray-100">
-    <div class="min-h-screen flex items-center justify-center">
+    <div class="min-h-screen flex items-center justify-center flex-col">
+        <h1 class="">UniStudent Expense Tracker</h1><br>
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Student Login</h1>
             <form action="#" method="POST">
@@ -43,7 +44,7 @@
             </form><br>
             <p class="text-center">Don't have account? <a href="signupStudent">Sign up</a></p>
             <div class="text-center mt-4 text-gray-500">
-                <a href="loginAdmin" class="no-underline hover:underline text-blue-600">
+                <a href="/loginAdmin" class="no-underline hover:underline text-blue-600">
                 <p>Login as Administrator</p>
                 </a>
             </div>
