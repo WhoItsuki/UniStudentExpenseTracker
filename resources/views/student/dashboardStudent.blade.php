@@ -44,7 +44,7 @@
 
                     <div class="m-0 flex items-center gap-4 p-0">
                         <div class="w-50 h-100 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col items-center">
-                            <h1 class="text-center text-xl">Total Expenses by Category</h1>
+                            <h1 class="text-center text-xl underline">Total Expenses by Category</h1>
                             
                             <canvas id="expenseChart" style="max-width:350px; max-height: 600px;"></canvas>
 
@@ -64,13 +64,13 @@
                                 </form>
                             </div>
                             <div class="h-50 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col">
-                                <h1 class="text-center text-xl">Current Balance (Income - Expense = Balance)</h1>
+                                <h1 class="text-center text-xl underline">Current Balance (Income - Expense = Balance)</h1>
                                 <br>
                                 <h6 class="text-center">RM1500 - RM450 = RM1050</h6>
                             </div>
 
                             <div class="h-50 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col items-center">
-                                <h1 class="text-center text-xl">Budget vs Expense</h1>
+                                <h1 class="text-center text-xl underline">Budget vs Expense</h1>
                                 <canvas id="expenseVSbudgetChart" style=""></canvas>
 
                                 <h6 class="text-center">Budget: RM 600 Expense: RM450</h6>
