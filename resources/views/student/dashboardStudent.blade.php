@@ -22,10 +22,11 @@
                     </div>
                     <div class="flex items-center">
                         <ol class="flex items-center gap-20 list-none m-0 p-0">
-                            <li class="m-0 p-0"><a href="" class="text-blue-600 no-underline hover:text-blue-800 hover:underline">Profile</a></li>
-                            <li class="m-0 p-0"><a href="" class="text-blue-600 no-underline hover:text-blue-800 hover:underline">Expenses</a></li>
-                            <li class="m-0 p-0"><a href="" class="text-blue-600 no-underline hover:text-blue-800 hover:underline">Budgets</a></li>
-                            <li class="m-0 p-0"><a href="" class="text-blue-600 no-underline hover:text-blue-800 hover:underline">Income</a></li>
+                            <li class="m-0 p-0"><a href="" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Profile</a></li>
+                            <li class="m-0 p-0"><a href="" class="text-blue-700 no-underline hover:text-blue-900 hover:underline">Dashboard</a></li>
+                            <li class="m-0 p-0"><a href="" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Expenses</a></li>
+                            <li class="m-0 p-0"><a href="" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Budgets</a></li>
+                            <li class="m-0 p-0"><a href="" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Income</a></li>
                         </ol>
                     </div>
                     <div class="flex items-center">
@@ -41,21 +42,40 @@
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Dashboard</h2>
                     <p class="text-gray-600">Welcome to your expense tracking dashboard. This is where you can manage your financials.</p>
 
-                    <div class="m-2 flex items-center gap-5">
-                        <div class="w-50 h-100 border-1 rounded-2 hover:shadow-lg p-2">
-                            <h1 class="text-center text-xl">Stats</h1>
+                    <div class="m-0 flex items-center gap-4 p-0">
+                        <div class="w-50 h-100 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col items-center">
+                            <h1 class="text-center text-xl">Total Expenses by Category</h1>
+                            
+                            <canvas id="expenseChart" style="max-width:350px; max-height: 600px;"></canvas>
+
+                            <h6 class="text-center">Total Expenses: RM450.00</h6>
                         </div>
                         <div class="w-50 flex flex-col gap-5">
-                            <div class="h-25 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col">
-                                <h1 class="text-center text-xl">Expense</h1>
-                                <canvas id="expenseChart" style="width:100%;max-width:600px"></canvas>
+                            <div class="flex flex-row justify-baseline gap-5">
+                                <h6>Filter:</h6>
+                                <form class="flex gap-10">
+                                    <select class="border-2 p-1 px-3 rounded-2">
+                                        <option value="Weekly">Weekly</option>
+                                        <option value="Monthly">Monthly</option>
+                                        <option value="Yearly">Yearly</option>
+    
+                                        <input type="submit" value="Submit" class="p-1 px-3 rounded-2 text-white bg-blue-600 hover:bg-blue-800">
+                                    </select>
+                                </form>
                             </div>
-                            <div class="h-25 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col">
-                                <h1 class="text-center text-xl">Income</h1>
+                            <div class="h-50 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col">
+                                <h1 class="text-center text-xl">Current Balance (Income - Expense = Balance)</h1>
+                                <br>
+                                <h6 class="text-center">RM1500 - RM450 = RM1050</h6>
                             </div>
-                            <div class="h-25 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col">
-                                <h1 class="text-center text-xl">Budget</h1>
+
+                            <div class="h-50 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col items-center">
+                                <h1 class="text-center text-xl">Budget vs Expense</h1>
+                                <canvas id="expenseVSbudgetChart" style=""></canvas>
+
+                                <h6 class="text-center">Budget: RM 600 Expense: RM450</h6>
                             </div>
+                            
                         </div>
                     </div>
 
