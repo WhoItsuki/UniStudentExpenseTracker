@@ -39,53 +39,108 @@
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap">
             <div class="px-4 py-6 sm:px-0 w-full">
                 <div class="bg-white rounded-lg shadow p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Dashboard</h2>
-                    <p class="text-gray-600">Welcome to your expense tracking dashboard. This is where you can manage your financials.</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Profile</h2>
+                    <p class="text-gray-600">Manage your profile.</p>
 
-                    <div class="m-0 flex items-center gap-4 p-0">
-                        <div class="w-50 h-100 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col items-center">
-                            <h1 class="text-center text-xl underline">Total Expenses by Category</h1>
-                            
-                            <canvas id="expenseChart" style="max-width:350px; max-height: 600px;"></canvas>
-
-                            <h6 class="text-center">Total Expenses: RM450.00</h6>
+                    <div class="m-0 flex items-stretch gap-4 p-0 flex-between">
+                        <div class="w-50 border-2 rounded-2 hover:shadow-lg p-4 flex flex-col h-full">
+                            <h6 class="text-lg font-semibold text-gray-800 mb-4 text-center">Profile Information</h6>
+                            <div class="flex flex-col gap-4 flex-grow"> 
+                                <!-- Full Name -->
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-sm font-medium text-gray-600">Full Name:</label>
+                                    <div class="text-gray-800 font-medium">Ahmad Albab</div>
+                                </div>
+                                
+                                <!-- Programme -->
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-sm font-medium text-gray-600">Programme:</label>
+                                    <div class="text-gray-800 font-medium">Information Technology</div>
+                                </div>
+                                
+                                <!-- Email -->
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-sm font-medium text-gray-600">Email:</label>
+                                    <div class="text-gray-800 font-medium">example@gmail.com</div>
+                                </div>
+                                
+                                <!-- Password -->
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-sm font-medium text-gray-600">Password:</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="password" 
+                                               id="passwordDisplay" 
+                                               value="••••••••" 
+                                               readonly 
+                                               class="text-gray-800 font-medium border-none bg-transparent p-0 focus:outline-none">
+                                        <button type="button" 
+                                                id="togglePassword" 
+                                                onclick="togglePasswordVisibility()"
+                                                class="text-blue-600 hover:text-blue-800 text-sm font-medium px-2 py-1 border border-blue-600 rounded hover:bg-blue-50 transition-colors">
+                                            Show
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="w-50 flex flex-col gap-5">
-                            <div class="flex flex-row justify-baseline gap-5">
-                                <h6>Filter:</h6>
-                                <form class="flex gap-10">
-                                    <select class="border-2 p-1 px-3 rounded-2">
-                                        <option value="Weekly">Weekly</option>
-                                        <option value="Monthly">Monthly</option>
-                                        <option value="Yearly">Yearly</option>
-    
-                                        <input type="submit" value="Submit" class="p-1 px-3 rounded-2 text-white bg-blue-600 hover:bg-blue-800">
-                                    </select>
+                            <div class="flex flex-column rounded-2 items-center justify-baseline gap-3 border-2 m-0 p-2 hover:shadow-lg h-full">
+                                <h6 class="text-lg font-semibold text-gray-800 mb-4 text-center">Edit profile:</h6>
+                                <form method="" class="w-75 flex flex-column gap-4">
+                                    <div class="flex justify-between">
+                                        <label>New First Name:</label>
+                                        <input class="border-2 p-1 rounded-2" type="text" value="Ahmad">
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <label >New Last Name:</label>
+                                        <input class="border-2 p-1 rounded-2" type="text" value="Albab">
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <label>New Programme:</label>
+                                    <input class="border-2 p-1 rounded-2" type="text" value="Information Technology">
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <label>New Email:</label>
+                                        <input class="border-2 p-1 rounded-2" type="email" value="example@gmail.com">        
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <label>New Password:</label>
+                                        <input class="border-2 p-1 rounded-2" type="password" value="example@gmail.com">    
+                                    </div>
+                                    <div class="flex flex-column items-center">
+                                        <input type="submit" value="Submit" class="p-1 rounded-2 bg-blue-600 text-white hover:bg-blue-800 w-25">
+                                    </div>
+                                    
                                 </form>
                             </div>
-                            <div class="h-50 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col">
-                                <h1 class="text-center text-xl underline">Current Balance (Income - Expense = Balance)</h1>
-                                <br>
-                                <h6 class="text-center">RM1500 - RM450 = RM1050</h6>
-                            </div>
 
-                            <div class="h-50 border-1 rounded-2 hover:shadow-lg p-2 flex flex-col items-center">
-                                <h1 class="text-center text-xl underline">Budget vs Expense</h1>
-                                <canvas id="expenseVSbudgetChart" style=""></canvas>
-
-                                <h6 class="text-center">Budget: RM 600 Expense: RM450</h6>
-                            </div>
+                            
                             
                         </div>
                     </div>
-
-
                 </div>
             </div>
 
             
         </main>
     </div>
+    
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('passwordDisplay');
+            const toggleButton = document.getElementById('togglePassword');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordInput.value = 'examplePassword123'; // Replace with actual password when connected to backend
+                toggleButton.textContent = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                passwordInput.value = '••••••••';
+                toggleButton.textContent = 'Show';
+            }
+        }
+    </script>
 </body>
 </html>
 

@@ -20,22 +20,20 @@ Route::get('/signupStudent', function () {
     return view('student/signup');
 });
 
+
+
+
+//Routes student navigation bar
 Route::get('/dashboardStudent', function () {
     return view('student/dashboardStudent');
 });
 
-
-//Route navigation bar
 Route::get('/expense', function(){
     return view('student/expenseStudent');
 });
 
 Route::get('/budget', function(){
     return view('student/budgetStudent');
-});
-
-Route::get('/expense', function(){
-    return view('student/expenseStudent');
 });
 
 Route::get('/income', function(){

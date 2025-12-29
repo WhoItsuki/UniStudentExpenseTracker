@@ -23,7 +23,7 @@
                     <div class="flex items-center">
                         <ol class="flex items-center gap-20 list-none m-0 p-0">
                             <li class="m-0 p-0"><a href="/profileStudent" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Profile</a></li>
-                                <li class="m-0 p-0"><a href="/dashboardStudent" class="text-blue-700 underline hover:text-blue-900 hover:underline">Dashboard</a></li>
+                            <li class="m-0 p-0"><a href="/dashboardStudent" class="text-blue-700 underline hover:text-blue-900 hover:underline">Dashboard</a></li>
                             <li class="m-0 p-0"><a href="/expense" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Expenses</a></li>
                             <li class="m-0 p-0"><a href="/budget" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Budgets</a></li>
                             <li class="m-0 p-0"><a href="/income" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Income</a></li>
