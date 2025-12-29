@@ -13,8 +13,9 @@ return new class extends Migration
             $table->id('studentID');
             $table->string('studentFname');
             $table->string('studentLname');
+            $table->string('studentFaculty');
+            $table->string('programme');
             $table->string('studentEmail')->unique();
-            $table->string('studentID')->unique();
             $table->string('password');
             
         });
