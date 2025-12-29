@@ -43,5 +43,9 @@ Route::get('/income', function(){
 Route::get('/profileStudent', function(){
     return view('student/profileStudent');
 });
+
+Route::get('/category', function(){
+    return view('student/category');
+});
 //
 

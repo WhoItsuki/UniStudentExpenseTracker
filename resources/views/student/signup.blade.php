@@ -54,6 +54,23 @@
                            required>
                 </div>
                 <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Faculty</label>
+                    <select name="faculty" 
+                            class="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                            required>
+                        <option value="">Select Faculty</option>
+                        <option value="Faculty of Computing">Faculty of Computing</option>
+                        <option value="Faculty of Engineering">Faculty of Engineering</option>
+                        <option value="Faculty of Business">Faculty of Business</option>
+                        <option value="Faculty of Science">Faculty of Science</option>
+                        <option value="Faculty of Arts">Faculty of Arts</option>
+                        <option value="Faculty of Medicine">Faculty of Medicine</option>
+                        <option value="Faculty of Law">Faculty of Law</option>
+                        <option value="Faculty of Education">Faculty of Education</option>
+                        <option value="Faculty of Social Sciences">Faculty of Social Sciences</option>
+                    </select>
+                </div>
+                <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-medium mb-2">Email</label>
                     <input type="email" 
                            name="studentEmail" 

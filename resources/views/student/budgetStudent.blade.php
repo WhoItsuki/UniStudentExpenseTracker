@@ -27,6 +27,7 @@
                             <li class="m-0 p-0"><a href="/expense" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Expenses</a></li>
                             <li class="m-0 p-0"><a href="/budget" class="text-blue-700 underline hover:text-blue-900 hover:underline">Budgets</a></li>
                             <li class="m-0 p-0"><a href="/income" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Income</a></li>
+                            <li class="m-0 p-0"><a href="/category" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Category</a></li>
                         </ol>
                     </div>
                     <div class="flex items-center">

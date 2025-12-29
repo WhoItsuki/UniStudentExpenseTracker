@@ -27,6 +27,7 @@
                             <li class="m-0 p-0"><a href="/expense" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Expenses</a></li>
                             <li class="m-0 p-0"><a href="/budget" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Budgets</a></li>
                             <li class="m-0 p-0"><a href="/income" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Income</a></li>
+                            <li class="m-0 p-0"><a href="/category" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Category</a></li>
                         </ol>
                     </div>
                     <div class="flex items-center">
@@ -43,7 +44,7 @@
                     <p class="text-gray-600">Manage your profile.</p>
 
                     <div class="m-0 flex items-stretch gap-4 p-0 flex-between">
-                        <div class="w-50 border-2 rounded-2 hover:shadow-lg p-4 flex flex-col h-full">
+                        <div class="w-50 border-2 rounded-2 hover:shadow-lg p-2 flex flex-col h-full">
                             <h6 class="text-lg font-semibold text-gray-800 mb-4 text-center">Profile Information</h6>
                             <div class="flex flex-col gap-4 flex-grow"> 
                                 <!-- Full Name -->
@@ -56,6 +57,12 @@
                                 <div class="flex flex-col gap-1">
                                     <label class="text-sm font-medium text-gray-600">Programme:</label>
                                     <div class="text-gray-800 font-medium">Information Technology</div>
+                                </div>
+                                
+                                <!-- Faculty -->
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-sm font-medium text-gray-600">Faculty:</label>
+                                    <div class="text-gray-800 font-medium">Faculty of Computing</div>
                                 </div>
                                 
                                 <!-- Email -->
@@ -98,6 +105,10 @@
                                     <div class="flex justify-between">
                                         <label>New Programme:</label>
                                     <input class="border-2 p-1 rounded-2" type="text" value="Information Technology">
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <label>New Faculty:</label>
+                                        <input class="border-2 p-1 rounded-2" type="text" value="Faculty of Computing">
                                     </div>
                                     <div class="flex justify-between">
                                         <label>New Email:</label>
