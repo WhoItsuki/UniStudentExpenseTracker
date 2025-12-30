@@ -46,7 +46,7 @@
                     <div class="m-0 flex items-stretch gap-4 p-0 flex-between">
                         <div class="w-50 border-2 rounded-2 hover:shadow-lg p-2 flex flex-col h-full">
                             <h6 class="text-lg font-semibold text-gray-800 mb-4 text-center">Profile Information</h6>
-                            <div class="flex flex-col gap-4 flex-grow"> 
+                            <div class="flex flex-col gap-4 flex-grow p-4"> 
                                 <!-- Full Name -->
                                 <div class="flex flex-col gap-1">
                                     <label class="text-sm font-medium text-gray-600">Full Name:</label>
