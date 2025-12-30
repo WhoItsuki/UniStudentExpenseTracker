@@ -51,8 +51,8 @@
 
                             <h6 class="text-center">Total Expenses: RM450.00</h6>
                         </div>
-                        <div class="w-50 flex flex-col gap-5">
-                            <div class="flex flex-row justify-baseline gap-5">
+                        <div class="w-50 flex flex-col gap-5 justify-around ">
+                            <div class="flex flex-row gap-5 align-content-baseline">
                                 <h6>Filter:</h6>
                                 <form class="flex gap-10">
                                     <select class="border-2 p-1 px-3 rounded-2">
