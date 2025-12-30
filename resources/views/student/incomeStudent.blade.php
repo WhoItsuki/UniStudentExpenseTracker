@@ -11,6 +11,18 @@
     <script src="{{ asset('js/chart.js') }}" defer></script>
 
     <title>Student Income</title>
+
+    <style>
+        table th,
+        table td {
+            padding: 0.5rem 0.75rem;
+        }
+        #editModal {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen">
@@ -42,10 +54,126 @@
                 <div class="bg-white rounded-lg shadow p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Income</h2>
                     <p class="text-gray-600">Manage your income here.</p>
+                    <div class="w-100 h-100 flex flex-row gap-4"> 
+                        <div class="w-50 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg" style="height: 500px;"> 
+                            <h6>Recent incomes' transactions</h6>
+                            <div class="flex flex-row align-items-baseline gap-4 py-2">
+                                
+                                <form class="flex flex-row align-items-baseline gap-3 ">
+                                    <p>Date range: </p>
+                                    <div class="flex flex-column gap-1">
+                                        <input type="date" name="firstRange" class="border-2 rounded-2 p-1">
+                                        <input type="date" name="secondRange" class="border-2 rounded-2 p-1">
+                                    </div>
+                                    <p>Category: </p>
+                                    <select class="border-2 rounded-2 p-1">
+                                        <option value="">All category</option>
+                                        <option value="">Allowance</option>
+                                        <option value="">Scholarship</option>
+                                        <option value="">Part time</option>
+                                        
+                                    </select>
+                                    <input type="submit" value="Apply filters" class="border-2 rounded-2 p-1 px-2 bg-green-500 text-white hover:bg-green-800    ">
+                                </form>
+                            </div>
+                            <br>
+                            <div class="overflow-auto w-100">
+                                <table class="border-collapse w-100 max-h-50 table-bordered border-2 border-black">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Date</th>
+                                            <th>Category</th>
+                                            <th>Amount</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Lunch</td>
+                                            <td>21-10-2026</td>
+                                            <td>Food</td>
+                                            <td>RM21.00</td>
+                                            <td>
+                                                <button onclick="confirmDelete(1, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1">Delete</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lunch</td>
+                                            <td>21-10-2026</td>
+                                            <td>Food</td>
+                                            <td>RM21.00</td>
+                                            <td>
+                                                <button onclick="confirmDelete(2, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1">Delete</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Lunch</td>
+                                            <td>21-10-2026</td>
+                                            <td>Food</td>
+                                            <td>RM21.00</td>
+                                            <td>
+                                                <button onclick="confirmDelete(3, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1">Delete</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <br>
+                            <h6>Total income : RM63.00</h6>
+                            
+                        </div>
+
+                        <div class="w-50 h-100 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg"> 
+                            <h6>Add new income</h6>
+                            <form class="flex flex-column w-75 px-5 py-2 gap-4">
+                                <div class="flex flex-row justify-between">
+                                    <label>Income's Name:</label>
+                                    <input type="text" class="border-2 rounded-2 p-1">
+                                </div>
+                                <div class="flex flex-row justify-between">
+                                    <label>Income's Amount:</label>
+                                    <input type="text" class="border-2 rounded-2 p-1">
+                                </div>
+                                <div class="flex flex-row justify-between">
+                                    <label>Income's Category:</label>
+                                    <select class="border-2 rounded-2 p-1">
+                                        <option value="">Allowance</option>
+                                        <option value="">Scholarship</option>
+                                        <option value="">Part time</option>
+                                    </select>
+                                </div>
+                                <div class="flex flex-row justify-between">
+                                    <label>Income's Date:</label>
+                                    <input type="date" class="border-2 rounded-2 p-1">
+                                </div>
+                                
+                                <div class="flex flex-col align-items-center"> 
+                                    <input type="submit" class="p-1 rounded-2 bg-blue-600 text-white hover:bg-blue-800 w-25" value="Submit">
+                                </div>
+                                
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
+
+
+    <script>
+
+        function confirmDelete(incomeID, incomeName) {
+            if (confirm(`Are you sure you want to delete the income "${incomeName}"? This action cannot be undone.`)) {
+                // Handle delete action here
+                console.log('Deleting income with ID:', incomeID);
+                // You can add AJAX call here to delete from backend
+                alert('Income deleted successfully!');
+                // Optionally reload the page or remove the row from table
+            }
+        }
+
+    </script>
 </body>
 </html>
 
