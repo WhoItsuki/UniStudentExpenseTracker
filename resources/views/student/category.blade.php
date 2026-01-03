@@ -11,6 +11,12 @@
     <script src="{{ asset('js/chart.js') }}" defer></script>
 
     <title>Student Categories</title>
+    <style>
+        table th,
+        table td {
+            padding: 0.5rem 0.75rem;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen">
@@ -41,11 +47,94 @@
             <div class="px-4 py-6 sm:px-0 w-full">
                 <div class="bg-white rounded-lg shadow p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Categories</h2>
-                    <p class="text-gray-600">Manage your expense and income categories here.</p>
+                    <p class="text-gray-600 mb-4">Manage your expense and income categories here.</p>
+                    <div class="w-100 h-100 flex flex-row gap-4"> 
+                        <div class="w-50 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg" style="height: 500px;"> 
+                            <h6 class="font-semibold text-lg mb-3">Existing Categories</h6>
+                            <div class="overflow-auto w-100">
+                                <table class="border-collapse w-100 max-h-50 table-bordered border-2 border-black">
+                                    <thead>
+                                        <tr>
+                                            <th>Category Type</th>
+                                            <th>Category Name</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($categories ?? [] as $category)
+                                        <tr>
+                                            <td>{{ $category->categoryType }}</td>
+                                            <td>{{ $category->categoryName }}</td>
+                                            <td>
+                                                <button onclick="confirmDelete({{ $category->categoryID }}, '{{ $category->categoryName }}')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm">Delete</button>
+                                            </td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center text-gray-500">No categories found. Create your first category below.</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="w-50 h-100 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg"> 
+                            <h6 class="font-semibold text-lg mb-3">Add New Category</h6>
+                            <form action="/category" method="POST" class="flex flex-column w-75 px-5 py-2 gap-4">
+                                @csrf
+                                <div class="flex flex-row justify-between items-center">
+                                    <label class="font-medium">Category Type:</label>
+                                    <select name="categoryType" class="border-2 rounded-2 p-1" required>
+                                        <option value="">Select Type</option>
+                                        <option value="income">Income</option>
+                                        <option value="expense">Expense/Budget</option>
+                                    </select>
+                                </div>
+                                <div class="flex flex-row justify-between items-center">
+                                    <label class="font-medium">Category Name:</label>
+                                    <input type="text" name="categoryName" class="border-2 rounded-2 p-1" required>
+                                </div>
+                                
+                                <div class="flex flex-col align-items-center mt-4"> 
+                                    <input type="submit" class="p-1 rounded-2 bg-blue-600 text-white hover:bg-blue-800 w-25 cursor-pointer" value="Submit">
+                                </div>
+                                
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <script>
+        function confirmDelete(categoryId, categoryName) {
+            if (confirm(`Are you sure you want to delete the category "${categoryName}"? This action cannot be undone.`)) {
+                // Create a form to submit DELETE request
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = `/category/${categoryId}`;
+                
+                // Add CSRF token
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = '_token';
+                csrfInput.value = '{{ csrf_token() }}';
+                form.appendChild(csrfInput);
+                
+                // Add method spoofing for DELETE
+                const methodInput = document.createElement('input');
+                methodInput.type = 'hidden';
+                methodInput.name = '_method';
+                methodInput.value = 'DELETE';
+                form.appendChild(methodInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
 </body>
 </html>
 

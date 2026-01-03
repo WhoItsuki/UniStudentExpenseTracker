@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
 
 class studentController extends Controller
 {
@@ -17,44 +15,31 @@ class studentController extends Controller
             'studentLname' => 'required|string|max:255',
             'studentEmail' => 'required|email|unique:student,studentEmail',
             'studentID' => 'required|string|unique:student,studentID',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
+        // Hash the password before saving
+        $validatedData['password'] = bcrypt($validatedData['password']);
         Student::create($validatedData);// Save the new student to the database
-        
-        return redirect()->route('student.login.get')->with('success', 'Registration successful! Please login.');
     }
 
     public function login(Request $request)
     {
         //Validate the incoming data
         $credentials = $request->validate([
-            'studentID' => 'required|string',
+            'studentEmail' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        if (Auth::guard('student')->attempt($credentials)) {
-            // Authentication passed - regenerate session for security
-            $request->session()->regenerate();
-            
-            // Store student name in session for display
-            $student = Auth::guard('student')->user();
-            session(['student_name' => $student->studentFname . ' ' . $student->studentLname]);
-            
-            return redirect()->route('student.dashboard');
+        // Attempt to find the student by email
+        $student = Student::where('studentEmail', $credentials['studentEmail'])->first();
+
+        if ($student && password_verify($credentials['password'], $student->password)) {
+            // Authentication passed
+            return response()->json(['message' => 'Login successful'], 200);
         } else {
             // Authentication failed
-            return back()->withErrors(['studentID' => 'Invalid student ID or password.'])->withInput($request->except('password'));
+            return response()->json(['message' => 'Invalid credentials'], 401);
         }
-    }
-        
-
-    public function logout(Request $request)
-    {
-        Auth::guard('student')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        
-        return redirect()->route('student.login.get')->with('success', 'You have been logged out successfully.');
     }
 }
