@@ -115,24 +115,33 @@
 
                             <h6 class="font-semibold text-lg mb-2">Recent Budget Transactions</h6>
                             <div class="flex flex-row align-items-baseline gap-4 py-2">
-                                <form id="filterForm" class="flex flex-row align-items-baseline gap-3" onsubmit="applyFilters(event)">
-                                    <p class="text-sm">Date range: </p>
-                                    <div class="flex flex-column gap-1">
-                                        <input type="date" id="firstRange" name="firstRange" class="border-2 rounded-2 p-1 text-sm">
-                                        <input type="date" id="secondRange" name="secondRange" class="border-2 rounded-2 p-1 text-sm">
+                                <form id="globalFilter" class="flex flex-wrap gap-3 items-end" onsubmit="submitGlobalFilter(event)">
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                        <input type="date" id="globalStartDate" name="start_date" class="border-2 rounded-lg p-2 text-sm" required>
                                     </div>
-                                    <p class="text-sm">Category: </p>
-                                    <select id="categoryFilter" name="categoryFilter" class="border-2 rounded-2 p-1 text-sm" onchange="syncCategorySelector()">
-                                        <option value="">All category</option>
-                                        @forelse($categories ?? [] as $category)
-                                            @if($category->categoryType === 'expense' || $category->categoryType === 'budget')
-                                                <option value="{{ $category->categoryID }}">{{ $category->categoryName }}</option>
-                                            @endif
-                                        @empty
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                        <input type="date" id="globalEndDate" name="end_date" class="border-2 rounded-lg p-2 text-sm" required>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-1">Time Frame</label>
+                                        <select id="categoryFilter" name="categoryFilter" class="border-2 rounded-2 p-1 text-sm" onchange="syncCategorySelector()">
+                                            <option value="">All category</option>
+                                            @forelse($categories ?? [] as $category)
+                                                @if($category->categoryType === 'Expense' || $category->categoryType === 'budget')
+                                                    <option value="{{ $category->categoryID }}">{{ $category->categoryName }}</option>
+                                                @endif   
+                                            @empty
                                             <option value="">No categories available</option>
-                                        @endforelse
-                                    </select>
-                                    <input type="submit" value="Apply filters" class="border-2 rounded-2 p-1 px-2 bg-green-500 text-white hover:bg-green-800 text-sm">
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">
+                                            Apply Filters
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
                             <br>
@@ -158,6 +167,16 @@
                                                 <button onclick="confirmDelete({{ $budget->budgetID }}, '{{ $budget->budgetName }}')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm">Delete</button>
                                             </td>
                                         </tr>
+                                        <tr>
+                                            <td>Lunch</td>
+                                            <td>21-10-2026</td>
+                                            <td>Food</td>
+                                            <td>RM21.00</td>
+                                            <td>
+                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 2)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm">Edit</button>
+                                                <button onclick="confirmDelete(2, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1">Delete</button>
+                                            </td>
+                                        </tr
                                         @empty
                                         <tr>
                                             <td colspan="5" class="text-center text-gray-500">No budgets found. Create your first budget below.</td>

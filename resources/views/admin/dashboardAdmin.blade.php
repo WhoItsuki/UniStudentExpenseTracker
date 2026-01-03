@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://unpkg.com/tailwindcss@1.9.6/dist/tailwind.min.css" rel="stylesheet"> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ asset('js/chart.js') }}" defer></script>
+
+    <title>Admin Dashboard</title>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <nav class="bg-white shadow-md fixed-top">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <h1 class="text-xl font-bold text-gray-800">Student Expense Tracker</h1>
+                    </div>
+                    <div class="flex items-center">
+                        <ol class="flex items-center gap-20 list-none m-0 p-0">
+                            <li class="m-0 p-0"><a href="/profileAdmin" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Profile</a></li>
+                            <li class="m-0 p-0"><a href="/dashboardAdmin" class="text-blue-700 underline hover:text-blue-900 hover:underline">Dashboard</a></li>
+                            <li class="m-0 p-0"><a href="/studentAdmin" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Students</a></li>
+                        </ol>
+                    </div>
+                    <div class="flex items-center">
+                            <a href="#" class="text-red-600 hover:text-red-800">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <br><br>
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap">
+            <div class="px-4 py-6 sm:px-0 w-full">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Dashboard</h2>
+                    <p class="text-gray-600 mb-6">Welcome to your admin dashboard. This is where you can manage your students and financials.</p>
+
+                    <!-- Global Filters -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Global Filters</h3>
+                        <div class="bg-gray-50 rounded-lg border-2 p-4">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-3">Filter All Data Below</h4>
+                            <form id="globalFilter" class="flex flex-wrap gap-4 items-end" onsubmit="submitGlobalFilter(event)">
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                    <input type="date" id="globalStartDate" name="start_date" class="border-2 rounded-lg p-2 text-sm" required>
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                    <input type="date" id="globalEndDate" name="end_date" class="border-2 rounded-lg p-2 text-sm" required>
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="text-sm font-medium text-gray-700 mb-1">Time Frame</label>
+                                    <select id="globalTimeFrame" name="time_frame" class="border-2 rounded-lg p-2 text-sm">
+                                        <option value="daily">Daily</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly" selected>Monthly</option>
+                                        <option value="yearly">Yearly</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">
+                                        Apply Filters
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Section 1: Student Spendings and Current Balance -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Student Financial Overview</h3>
+                        <div class="bg-gray-50 rounded-lg border-2 overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full table-auto border-collapse">
+                                    <thead class="bg-gray-200">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Student ID</th>
+                                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Name</th>
+                                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Programme</th>
+                                            <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Faculty</th>
+                                            <th class="px-4 py-3 text-right text-sm font-semibold text-gray-700 border-b">Total Spending</th>
+                                            <th class="px-4 py-3 text-right text-sm font-semibold text-gray-700 border-b">Current Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($students ?? [] as $student)
+                                        <tr class="hover:bg-gray-100 transition-colors">
+                                            <td class="px-4 py-3 text-sm text-gray-900 border-b">{{ $student->studentID }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900 border-b">{{ $student->studentFname }} {{ $student->studentLname }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900 border-b">{{ $student->programme ?? 'N/A' }}</td>
+                                            <td class="px-4 py-3 text-sm text-gray-900 border-b">{{ $student->studentFaculty ?? 'N/A' }}</td>
+                                            <td class="px-4 py-3 text-sm text-right text-red-600 border-b font-semibold">RM{{ number_format($student->total_spending ?? 0, 2) }}</td>
+                                            <td class="px-4 py-3 text-sm text-right {{ ($student->current_balance ?? 0) >= 0 ? 'text-green-600' : 'text-red-600' }} border-b font-semibold">RM{{ number_format($student->current_balance ?? 0, 2) }}</td>
+                                        </tr>
+                                        @empty
+                                        <tr>
+                                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">No student data available</td>
+                                        </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Spending Analytics -->
+                    <div class="mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">Spending Analytics</h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Average Spending -->
+                            <div class="bg-blue-50 rounded-lg border-2 p-4">
+                                <h4 class="text-lg font-semibold text-blue-800 mb-3">Average Spending</h4>
+                                <div class="text-2xl font-bold text-blue-600 mb-2">RM{{ number_format($analytics['average'] ?? 0, 2) }}</div>
+                                @if($analytics['average_student'] ?? null)
+                                <div class="text-sm text-gray-600">
+                                    <p><strong>Student:</strong> {{ $analytics['average_student']->studentFname }} {{ $analytics['average_student']->studentLname }}</p>
+                                    <p><strong>ID:</strong> {{ $analytics['average_student']->studentID }}</p>
+                                    <p><strong>Programme:</strong> {{ $analytics['average_student']->programme ?? 'N/A' }}</p>
+                                </div>
+                                @endif
+                            </div>
+
+                            <!-- Highest Spending -->
+                            <div class="bg-red-50 rounded-lg border-2 p-4">
+                                <h4 class="text-lg font-semibold text-red-800 mb-3">Highest Spending</h4>
+                                <div class="text-2xl font-bold text-red-600 mb-2">RM{{ number_format($analytics['highest'] ?? 0, 2) }}</div>
+                                @if($analytics['highest_student'] ?? null)
+                                <div class="text-sm text-gray-600">
+                                    <p><strong>Student:</strong> {{ $analytics['highest_student']->studentFname }} {{ $analytics['highest_student']->studentLname }}</p>
+                                    <p><strong>ID:</strong> {{ $analytics['highest_student']->studentID }}</p>
+                                    <p><strong>Programme:</strong> {{ $analytics['highest_student']->programme ?? 'N/A' }}</p>
+                                </div>
+                                @endif
+                            </div>
+
+                            <!-- Lowest Spending -->
+                            <div class="bg-green-50 rounded-lg border-2 p-4">
+                                <h4 class="text-lg font-semibold text-green-800 mb-3">Lowest Spending</h4>
+                                <div class="text-2xl font-bold text-green-600 mb-2">RM{{ number_format($analytics['lowest'] ?? 0, 2) }}</div>
+                                @if($analytics['lowest_student'] ?? null)
+                                <div class="text-sm text-gray-600">
+                                    <p><strong>Student:</strong> {{ $analytics['lowest_student']->studentFname }} {{ $analytics['lowest_student']->studentLname }}</p>
+                                    <p><strong>ID:</strong> {{ $analytics['lowest_student']->studentID }}</p>
+                                    <p><strong>Programme:</strong> {{ $analytics['lowest_student']->programme ?? 'N/A' }}</p>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Set default dates for global filter (current month)
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+            const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+            document.getElementById('globalStartDate').value = startOfMonth.toISOString().split('T')[0];
+            document.getElementById('globalEndDate').value = endOfMonth.toISOString().split('T')[0];
+        });
+
+        function submitGlobalFilter(event) {
+            event.preventDefault();
+
+            const formData = new FormData(document.getElementById('globalFilter'));
+            const params = new URLSearchParams();
+
+            for (let [key, value] of formData.entries()) {
+                params.append(key, value);
+            }
+
+            // You can implement AJAX call here to fetch filtered data for both sections
+            // For now, we'll just log the parameters
+            console.log('Global filter parameters:', Object.fromEntries(formData));
+
+            // Example of how you might make an AJAX request:
+            /*
+            fetch('/admin/dashboard?' + params.toString(), {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update both the student overview table and analytics cards with new data
+                updateStudentOverview(data.students);
+                updateAnalyticsCards(data.analytics);
+            })
+            .catch(error => {
+                console.error('Error fetching filtered data:', error);
+            });
+            */
+
+            // Show feedback to user
+            alert('Global filters applied! (Note: AJAX implementation needed for real-time updates)');
+
+            return false;
+        }
+
+        function updateStudentOverview(students) {
+            // Update the student financial overview table
+            // This would require rebuilding the table rows with new data
+            // (Implementation would depend on your backend response structure)
+        }
+
+        function updateAnalyticsCards(data) {
+            // Update average spending
+            if (data.average) {
+                document.querySelector('.bg-blue-50 .text-2xl').textContent = 'RM' + parseFloat(data.average).toFixed(2);
+            }
+
+            // Update highest spending
+            if (data.highest) {
+                document.querySelector('.bg-red-50 .text-2xl').textContent = 'RM' + parseFloat(data.highest).toFixed(2);
+            }
+
+            // Update lowest spending
+            if (data.lowest) {
+                document.querySelector('.bg-green-50 .text-2xl').textContent = 'RM' + parseFloat(data.lowest).toFixed(2);
+            }
+
+            // Update student information if provided
+            // (This would need to be implemented based on your backend response structure)
+        }
+    </script>
+</body>
+</html>

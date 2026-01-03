@@ -47,5 +47,15 @@ Route::get('/profileStudent', function(){
 Route::get('/category', function(){
     return view('student/category');
 });
-//
 
+
+//Routes admin navigation bar
+Route::get('/dashboardAdmin', function(){
+    return view('admin/dashboardAdmin');
+});
+Route::get('/profileAdmin', function(){
+    return view('admin/profileAdmin');
+});
+Route::get('/studentAdmin', function(){
+    return view('admin/studentAdmin');
+});

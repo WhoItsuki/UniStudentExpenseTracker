@@ -58,22 +58,33 @@
                         <div class="w-50 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg" style="height: 500px;"> 
                             <h6>Recent incomes' transactions</h6>
                             <div class="flex flex-row align-items-baseline gap-4 py-2">
-                                
-                                <form class="flex flex-row align-items-baseline gap-3 ">
-                                    <p>Date range: </p>
-                                    <div class="flex flex-column gap-1">
-                                        <input type="date" name="firstRange" class="border-2 rounded-2 p-1">
-                                        <input type="date" name="secondRange" class="border-2 rounded-2 p-1">
+                                <form id="globalFilter" class="flex flex-wrap gap-3 items-end" onsubmit="submitGlobalFilter(event)">
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                        <input type="date" id="globalStartDate" name="start_date" class="border-2 rounded-lg p-2 text-sm" required>
                                     </div>
-                                    <p>Category: </p>
-                                    <select class="border-2 rounded-2 p-1">
-                                        <option value="">All category</option>
-                                        <option value="">Allowance</option>
-                                        <option value="">Scholarship</option>
-                                        <option value="">Part time</option>
-                                        
-                                    </select>
-                                    <input type="submit" value="Apply filters" class="border-2 rounded-2 p-1 px-2 bg-green-500 text-white hover:bg-green-800    ">
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                        <input type="date" id="globalEndDate" name="end_date" class="border-2 rounded-lg p-2 text-sm" required>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <label class="text-sm font-medium text-gray-700 mb-1">Time Frame</label>
+                                        <select id="categoryFilter" name="categoryFilter" class="border-2 rounded-2 p-1 text-sm" onchange="syncCategorySelector()">
+                                            <option value="">All category</option>
+                                            @forelse($categories ?? [] as $category)
+                                                @if($category->categoryType === 'Income')
+                                                    <option value="{{ $category->categoryID }}">{{ $category->categoryName }}</option>
+                                                @endif   
+                                            @empty
+                                            <option value="">No categories available</option>
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">
+                                            Apply Filters
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
                             <br>
