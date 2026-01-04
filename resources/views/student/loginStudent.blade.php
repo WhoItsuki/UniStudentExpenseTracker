@@ -17,7 +17,9 @@
         <h1 class="">UniStudent Expense Tracker</h1><br>
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Student Login</h1>
-            <form action="#" method="POST">
+
+            
+            <form action="" method="POST">
                 @csrf
                 <div class="mb-4">
                     <label for="student_id" class="block text-gray-700 text-sm font-medium mb-2">Student ID</label>

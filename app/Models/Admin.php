@@ -3,20 +3,34 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Admin extends Model
+class Admin extends Authenticatable
 {
-    protected $table = 'admin';
+    use HasFactory, Notifiable;
+
+    protected $table = 'admins';
+
+    protected $primaryKey = 'adminID';
 
     protected $fillable = [
-        'adminFname',
-        'adminLname',
+        'adminFName',
+        'adminLName',
         'adminEmail',
-        'adminID',
         'password',
     ];
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
+    }
 }

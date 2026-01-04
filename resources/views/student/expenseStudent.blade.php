@@ -43,7 +43,10 @@
                         </ol>
                     </div>
                     <div class="flex items-center">
-                            <a href="#" class="text-red-600 hover:text-red-800">Logout</a>
+                            <form action="{{ route('student.logout') }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="text-red-600 hover:text-red-800 border-none bg-transparent cursor-pointer">Logout</button>
+                            </form>
                     </div>
                 </div>
             </div>

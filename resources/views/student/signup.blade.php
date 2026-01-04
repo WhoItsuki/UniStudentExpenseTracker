@@ -17,17 +17,10 @@
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Student Sign up</h1>
             
-            @if ($errors->any())
-                <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                    <ul class="list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
 
-            <form action="" method="POST">
+            
+
+            <form action="studentSignup" method="POST">
                 @csrf
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-medium mb-2">First Name</label>
@@ -50,13 +43,13 @@
                     <input type="text" 
                            name="programme" 
                            class="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"        
-                           placeholder="programmed" 
+                           placeholder="Programme" 
                            required>
                 </div>
                 <div class="mb-6">
                     <label class="block text-gray-700 text-sm font-medium mb-2">Faculty</label>
-                    <select name="faculty" 
-                            class="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                    <select name="studentFaculty"
+                            class="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             required>
                         <option value="">Select Faculty</option>
                         <option value="Faculty of Computing">Faculty of Computing</option>
@@ -87,11 +80,11 @@
                            required>
                 </div>
                 <div class="mb-6">
-                    <label class="block text-gray-700 text-sm font-medium mb-2">New Password</label>
-                    <input type="password" 
-                           name="password" 
-                           class="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"        
-                           placeholder="Enter your new password" 
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Password</label>
+                    <input type="password"
+                           name="password"
+                           class="w-full px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="Enter your password"
                            required>
                 </div>
 
@@ -101,7 +94,7 @@
                     Sign Up
                 </button>
             </form><br>
-            <p class="text-center">Already have account? <a href="/logimStudent">Login</a></p>
+            <p class="text-center">Already have account? <a href="/loginStudent">Login</a></p>
             <div class="text-center mt-4 text-gray-500">
                 <a href="/loginAdmin" class="no-underline hover:underline text-blue-600">
                 <p>Login as Administrator</p>

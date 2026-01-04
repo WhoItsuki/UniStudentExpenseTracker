@@ -9,7 +9,7 @@ return new class extends Migration
 
     public function up(): void//Create the student table
     {
-        Schema::create('student', function (Blueprint $table) {
+        Schema::create('students', function (Blueprint $table) {
             $table->id('studentID');
             $table->string('studentFname');
             $table->string('studentLname');
@@ -17,12 +17,13 @@ return new class extends Migration
             $table->string('programme');
             $table->string('studentEmail')->unique();
             $table->string('password');
+            $table->timestamps();   
             
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('student');
+        Schema::dropIfExists('students');
     }
 };

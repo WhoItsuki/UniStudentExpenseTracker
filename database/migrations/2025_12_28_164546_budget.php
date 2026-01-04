@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('budget', function (Blueprint $table) {
+        Schema::create('budgets', function (Blueprint $table) {
             $table->id('budgetID');
             $table->string('budgetName');
             $table->double('budgetLimit');

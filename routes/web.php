@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\studentController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\adminController;
 
 Route::get('/', function () {
@@ -59,3 +59,8 @@ Route::get('/profileAdmin', function(){
 Route::get('/studentAdmin', function(){
     return view('admin/studentAdmin');
 });
+
+//Student function
+Route::post('studentSignup', [StudentController::class, 'signUp']);
+Route::post('studentLogin', [StudentController::class, 'login']);
+Route::post('studentLogout', [StudentController::class, 'logout']);
