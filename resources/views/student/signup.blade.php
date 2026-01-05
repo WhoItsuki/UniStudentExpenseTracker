@@ -16,9 +16,16 @@
     <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Student Sign up</h1>
-            
 
-            
+            @if($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <form action="studentSignup" method="POST">
                 @csrf
