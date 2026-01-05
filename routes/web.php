@@ -56,9 +56,8 @@ Route::get('/dashboardAdmin', function(){
 Route::get('/profileAdmin', function(){
     return view('admin/profileAdmin');
 });
-Route::get('/studentAdmin', function(){
-    return view('admin/studentAdmin');
-});
+Route::get('/studentAdmin', [adminController::class, 'studentList']);
+Route::get('/admin/student/{studentID}/details', [adminController::class, 'getStudentDetails']);
 
 //Student function
 Route::post('studentSignup', [StudentController::class, 'signUp']);
