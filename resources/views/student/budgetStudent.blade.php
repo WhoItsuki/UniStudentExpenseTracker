@@ -37,7 +37,7 @@
                         </ol>
                     </div>
                     <div class="flex items-center">
-                            <form action="{{ route('student.logout') }}" method="POST" class="inline">
+                            <form action="" method="POST" class="inline">
                                 @csrf
                                 <button type="submit" class="text-red-600 hover:text-red-800 border-none bg-transparent cursor-pointer">Logout</button>
                             </form>

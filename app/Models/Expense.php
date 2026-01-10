@@ -28,4 +28,9 @@ class Expense extends Model
     {
         return $this->belongsTo(Category::class, 'categoryID');
     }
+
+    public function student()
+    {
+        return $this->hasOneThrough(Student::class, Category::class, 'categoryID', 'studentID', 'categoryID', 'studentID');
+    }
 }

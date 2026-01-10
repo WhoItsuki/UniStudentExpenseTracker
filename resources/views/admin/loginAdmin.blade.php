@@ -9,13 +9,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 
     <title>Login</title>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-            <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Administrator Login</h1>
+            <h1 class="text-2xl font-bold text-center mb-6 text-gray-800"><i class="fas fa-shield-alt mr-2"></i>Administrator Login</h1>
             <form action="#" method="POST">
                 @csrf
                 <div class="mb-4">
@@ -38,7 +40,7 @@
                 </div>
                 <button type="submit" 
                         class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium">
-                    Login
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login
                 </button>
             </form>
             <div class="text-center mt-4 text-gray-500">

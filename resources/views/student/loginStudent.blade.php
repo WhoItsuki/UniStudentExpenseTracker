@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 
     <title>Login</title>
 </head>
@@ -16,7 +18,7 @@
     <div class="min-h-screen flex items-center justify-center flex-col">
         <h1 class="">UniStudent Expense Tracker</h1><br>
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-            <h1 class="text-2xl font-bold text-center mb-6 text-gray-800">Student Login</h1>
+            <h1 class="text-2xl font-bold text-center mb-6 text-gray-800"><i class="fas fa-user mr-2"></i>Student Login</h1>
 
             @if(session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -56,7 +58,7 @@
                 </div>
                 <button type="submit" 
                         class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 font-medium">
-                    Login
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login
                 </button>
             </form><br>
             <p class="text-center">Don't have account? <a href="/signupStudent">Sign up</a></p>

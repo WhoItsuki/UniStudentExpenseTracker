@@ -10,6 +10,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ asset('js/chart.js') }}" defer></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <title>Student Expenses</title>
         <style>
         table th,
@@ -34,18 +36,18 @@
                     </div>
                     <div class="flex items-center">
                         <ol class="flex items-center gap-20 list-none m-0 p-0">
-                            <li class="m-0 p-0"><a href="/profileStudent" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Profile</a></li>
-                            <li class="m-0 p-0"><a href="/dashboardStudent" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Dashboard</a></li>
-                            <li class="m-0 p-0"><a href="/expense" class="text-blue-700 underline hover:text-blue-900 hover:underline">Expenses</a></li>
-                            <li class="m-0 p-0"><a href="/budget" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Budgets</a></li>
-                            <li class="m-0 p-0"><a href="/income" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Income</a></li>
-                            <li class="m-0 p-0"><a href="/category" class="text-blue-500 no-underline hover:text-blue-900 hover:underline">Category</a></li>
+                            <li class="m-0 p-0"><a href="/profileStudent" class="text-blue-500 no-underline hover:text-blue-900 hover:underline"><i class="fas fa-user mr-2"></i>Profile</a></li>
+                            <li class="m-0 p-0"><a href="/dashboardStudent" class="text-blue-500 no-underline hover:text-blue-900 hover:underline"><i class="fas fa-tachometer-alt mr-2"></i>Dashboard</a></li>
+                            <li class="m-0 p-0"><a href="/expense" class="text-blue-700 underline hover:text-blue-900 hover:underline"><i class="fas fa-wallet mr-2"></i>Expenses</a></li>
+                            <li class="m-0 p-0"><a href="/budget" class="text-blue-500 no-underline hover:text-blue-900 hover:underline"><i class="fas fa-chart-pie mr-2"></i>Budgets</a></li>
+                            <li class="m-0 p-0"><a href="/income" class="text-blue-500 no-underline hover:text-blue-900 hover:underline"><i class="fas fa-coins mr-2"></i>Income</a></li>
+                            <li class="m-0 p-0"><a href="/category" class="text-blue-500 no-underline hover:text-blue-900 hover:underline"><i class="fas fa-tags mr-2"></i>Category</a></li>
                         </ol>
                     </div>
                     <div class="flex items-center">
-                            <form action="{{ route('student.logout') }}" method="POST" class="inline">
+                            <form action="" method="POST" class="inline">
                                 @csrf
-                                <button type="submit" class="text-red-600 hover:text-red-800 border-none bg-transparent cursor-pointer">Logout</button>
+                                <button type="submit" class="text-red-600 hover:text-red-800 border-none bg-transparent cursor-pointer"><i class="fas fa-sign-out-alt mr-1"></i>Logout</button>
                             </form>
                     </div>
                 </div>
@@ -85,7 +87,7 @@
                                     </div>
                                     <div>
                                         <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">
-                                            Apply Filters
+                                            <i class="fas fa-filter mr-1"></i>Apply Filters
                                         </button>
                                     </div>
                                 </form>
@@ -109,8 +111,8 @@
                                             <td>Food</td>
                                             <td>RM21.00</td>
                                             <td>
-                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 1)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm">Edit</button>
-                                                <button onclick="confirmDelete(1, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1">Delete</button>
+                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 1)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm"><i class="fas fa-edit mr-1"></i>Edit</button>
+                                                <button onclick="confirmDelete(1, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1"><i class="fas fa-trash mr-1"></i>Delete</button>
                                             </td>
                                         </tr>
                                         <tr>
@@ -119,8 +121,8 @@
                                             <td>Food</td>
                                             <td>RM21.00</td>
                                             <td>
-                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 2)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm">Edit</button>
-                                                <button onclick="confirmDelete(2, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1">Delete</button>
+                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 2)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm"><i class="fas fa-edit mr-1"></i>Edit</button>
+                                                <button onclick="confirmDelete(2, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1"><i class="fas fa-trash mr-1"></i>Delete</button>
                                             </td>
                                         </tr>
                                         <tr>
@@ -129,8 +131,8 @@
                                             <td>Food</td>
                                             <td>RM21.00</td>
                                             <td>
-                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 3)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm">Edit</button>
-                                                <button onclick="confirmDelete(3, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1">Delete</button>
+                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 3)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm"><i class="fas fa-edit mr-1"></i>Edit</button>
+                                                <button onclick="confirmDelete(3, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1"><i class="fas fa-trash mr-1"></i>Delete</button>
                                             </td>
                                         </tr>
                                     </tbody>
