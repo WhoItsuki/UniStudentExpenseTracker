@@ -17,6 +17,7 @@ return new class extends Migration
             $table->double('incomeAmount');
             $table->date('incomeDate');
             $table->foreignId('studentID');
+            
             $table->timestamps();
         });
     }

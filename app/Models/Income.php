@@ -17,6 +17,7 @@ class Income extends Model
         'incomeAmount',
         'incomeDate',
         'studentID',
+        'categoryID',
     ];
 
     protected $casts = [
@@ -27,5 +28,10 @@ class Income extends Model
     public function student()
     {
         return $this->belongsTo(Student::class, 'studentID');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'categoryID');
     }
 }

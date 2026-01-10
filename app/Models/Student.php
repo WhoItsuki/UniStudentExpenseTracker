@@ -35,6 +35,11 @@ class Student extends Model
 
     public function expenses()
     {
-        return $this->hasManyThrough(Expense::class, Category::class, 'studentID', 'categoryID', 'studentID', 'categoryID');
+        return $this->hasMany(Expense::class, 'studentID', 'studentID');
+    }
+
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class, 'studentID', 'studentID');
     }
 }

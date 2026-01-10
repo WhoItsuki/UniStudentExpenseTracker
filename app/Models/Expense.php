@@ -17,6 +17,7 @@ class Expense extends Model
         'expenseAmount',
         'expenseDate',
         'categoryID',
+        'studentID',
     ];
 
     protected $casts = [
@@ -31,6 +32,6 @@ class Expense extends Model
 
     public function student()
     {
-        return $this->hasOneThrough(Student::class, Category::class, 'categoryID', 'studentID', 'categoryID', 'studentID');
+        return $this->belongsTo(Student::class, 'studentID', 'studentID');
     }
 }

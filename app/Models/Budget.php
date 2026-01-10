@@ -17,6 +17,7 @@ class Budget extends Model
         'budgetLimit',
         'budgetDate',
         'categoryID',
+        'studentID',
     ];
 
     protected $casts = [
@@ -27,5 +28,10 @@ class Budget extends Model
     public function category()
     {
         return $this->belongsTo(Category::class, 'categoryID');
+    }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'studentID', 'studentID');
     }
 }
