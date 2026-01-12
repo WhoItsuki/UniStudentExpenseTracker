@@ -6,6 +6,7 @@ use App\Http\Controllers\budgetController;
 use App\Http\Controllers\expenseController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\categoryController;
+use App\Http\Controllers\incomeController;
 
 Route::get('/', function () {
     return view('student/loginStudent');
@@ -36,9 +37,8 @@ Route::middleware('student.auth')->group(function () {
 
     
 
-    Route::get('/income', function(){
-        return view('student/incomeStudent');
-    });
+    Route::get('/income', [incomeController::class, 'viewIncomes']);
+    Route::get('/viewIncomes', [incomeController::class, 'viewIncomes']);
 
     Route::get('/profileStudent', [StudentController::class, 'profile']);
     Route::post('/profileStudent', [StudentController::class, 'updateProfile'])->name('student.updateProfile');
@@ -65,6 +65,11 @@ Route::middleware('student.auth')->group(function () {
     Route::put('/budget/{budgetID}', [budgetController::class, 'updateBudget']);
     Route::delete('/budget/{budgetID}', [budgetController::class, 'deleteBudget']);
     Route::get('/viewBudget', [budgetController::class, 'viewBudgets']);
+
+    //Routes for income
+    Route::post('/addIncome', [incomeController::class, 'addIncome']);
+    Route::delete('/income/{incomeID}', [incomeController::class, 'deleteIncome']);
+
 });
 
 
