@@ -18,8 +18,6 @@ class studentController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // Hash the password before saving
-        $validatedData['password'] = bcrypt($validatedData['password']);
         Student::create($validatedData);// Save the new student to the database
     }
 
