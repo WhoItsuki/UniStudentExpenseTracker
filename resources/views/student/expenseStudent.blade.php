@@ -48,7 +48,7 @@
                         </ol>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <span class="text-gray-700"><i class="fas fa-user-circle mr-2"></i>{{ session('student_name') }}</span>
+
                         <form action="{{ route('student.logout') }}" method="POST" class="inline">
                             @csrf
                             <button type="submit" class="text-red-600 hover:text-red-800 border-none bg-transparent cursor-pointer"><i class="fas fa-sign-out-alt mr-1"></i>Logout</button>
@@ -74,6 +74,7 @@
                         {{ session('success') }}
                     </div>
                 @endif
+                <div class="bg-white border-1 py-3 px-4 rounded-lg shadow p-6 mb-2"><span class="text-gray-700">Welcome, {{ session('student_name') }} !</span></div>
                 <div class="bg-white rounded-lg shadow p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-wallet mr-2"></i>Expenses</h2>
                     <p class="text-gray-600"><i class="fas fa-cogs mr-1"></i>Manage your expenses here.</p>

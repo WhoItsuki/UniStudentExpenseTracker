@@ -36,7 +36,7 @@
                         </ol>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <span class="text-gray-700"><i class="fas fa-user-circle mr-2"></i>{{ session('student_name') }}</span>
+
                         <form action="{{ route('student.logout') }}" method="POST" class="inline">
                             @csrf
                             <button type="submit" class="text-red-600 hover:text-red-800 no-underline"><i class="fas fa-sign-out-alt mr-1"></i>Logout</button>
@@ -48,6 +48,7 @@
         <br><br>
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap">
             <div class="px-4 py-6 sm:px-0 w-full">
+                <div class="bg-white border-1 py-3 px-4 rounded-lg shadow p-6 mb-2"><span class="text-gray-700">Welcome, {{ session('student_name') }} !</span></div>
                 <div class="bg-white rounded-lg shadow p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Dashboard</h2>
                     <p class="text-gray-600">Welcome to your expense tracking dashboard. This is where you can manage your financials.</p>
