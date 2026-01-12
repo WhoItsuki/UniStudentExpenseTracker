@@ -77,16 +77,23 @@
                             <div class="w-100 mb-4 p-3 bg-gray-50 rounded-lg border-2">
                                 <div class="flex flex-row justify-between items-center mb-3">
                                     <h6 class="font-semibold mb-0">Budget Remaining</h6>
-                                    <select id="categorySelector" class="border-2 rounded-2 p-1 text-sm" onchange="updateBudgetByCategory()">
-                                        <option value="">All Categories</option>
-                                        @forelse($categories ?? [] as $category)
-                                            @if($category->categoryType === 'expense' || $category->categoryType === 'budget')
-                                                <option value="{{ $category->categoryID }}" data-name="{{ $category->categoryName }}">{{ $category->categoryName }}</option>
-                                            @endif
-                                        @empty
-                                            <option value="">No categories available</option>
-                                        @endforelse
-                                    </select>
+                                    <div class="flex flex-row gap-2">
+                                        <select id="categorySelector" class="border-2 rounded-2 p-1 text-sm" onchange="updateBudgetByCategory()">
+                                            <option value="">All Categories</option>
+                                            @forelse($categories ?? [] as $category)
+                                                @if($category->categoryType === 'Expense' || $category->categoryType === 'budget')
+                                                    <option value="{{ $category->categoryID }}" data-name="{{ $category->categoryName }}">{{ $category->categoryName }}</option>
+                                                @endif
+                                            @empty
+                                                <option value="">No categories available</option>
+                                            @endforelse
+                                        </select>
+                                        <select id="timePeriodSelector" class="border-2 rounded-2 p-1 text-sm" onchange="updateBudgetByTimePeriod()">
+                                            <option value="daily">Daily</option>
+                                            <option value="monthly" selected>Monthly</option>
+                                            <option value="yearly">Yearly</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="flex flex-row gap-2 items-center mb-3">
                                     <div style="width: 200px; height: 200px;">
@@ -136,7 +143,7 @@
 
                             <h6 class="font-semibold text-lg mb-2">Recent Budget Transactions</h6>
                             <div class="flex flex-row align-items-baseline gap-4 py-2">
-                                <form id="globalFilter" class="flex flex-wrap gap-3 items-end" method="GET" action="/viewBudgets">
+                                <form id="globalFilter" class="flex flex-wrap gap-3 items-end" method="GET" action="/">
                                     <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-1">Start Date</label>
                                         <input type="date" id="globalStartDate" name="start_date" class="border-2 rounded-lg p-2 text-sm" value="{{ request('start_date') }}">
@@ -310,6 +317,60 @@
             used: {{ $usedBudget ?? 0 }},
             categories: @json($categoryBudgets ?? [])
         };
+
+        // Fetch budget data based on filters (category and date range)
+        function fetchBudgetByFilters(categoryID = null, startDate = null, endDate = null) {
+            const params = new URLSearchParams();
+            
+            if (categoryID) {
+                params.append('categoryID', categoryID);
+            }
+            if (startDate) {
+                params.append('start_date', startDate);
+            }
+            if (endDate) {
+                params.append('end_date', endDate);
+            }
+
+            fetch(`/api/budget/fetch-filters?${params.toString()}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update budget data with fetched data
+                    budgetData.total = data.total;
+                    budgetData.used = data.used;
+                    
+                    if (data.categoryBudgets) {
+                        budgetData.categories = data.categoryBudgets;
+                    }
+                    
+                    // Update charts with new data
+                    if (categoryID) {
+                        // Single category view
+                        updateBudgetChart(data.total, data.used, data.categoryName);
+                    } else {
+                        // All categories view
+                        showBudgetOnCharts();
+                    }
+                    
+                    console.log('Budget data fetched successfully:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching budget data:', error);
+            });
+        }
 
         function updateBudgetChart(totalBudget, usedBudget, categoryName = '') {
             const remainingBudget = totalBudget - usedBudget;
@@ -488,20 +549,75 @@
         function updateBudgetByCategory() {
             const categorySelector = document.getElementById('categorySelector');
             const selectedCategoryId = categorySelector.value;
-            const selectedOption = categorySelector.options[categorySelector.selectedIndex];
-            
+
             // Sync with filter dropdown
             document.getElementById('categoryFilter').value = selectedCategoryId;
-            
-            // Filter budget data by category (replace with actual API call)
-            if (selectedCategoryId === '') {
-                // Show all categories
-                updateBudgetChart(budgetData.total, budgetData.used);
+
+            // Fetch budget on charts for selected category
+            if (selectedCategoryId) {
+                fetchBudgetByFilters(selectedCategoryId);
             } else {
-                // Filter by selected category (this would be replaced with actual API call)
-                // For now, using sample data - replace with actual filtered data from backend
-                const categoryName = selectedOption.getAttribute('data-name');
-                updateBudgetChart(budgetData.total, budgetData.used, categoryName);
+                fetchBudgetByFilters();
+            }
+        }
+
+        // Update budget by time period (daily, monthly, yearly)
+        function updateBudgetByTimePeriod() {
+            const timePeriod = document.getElementById('timePeriodSelector').value;
+            const categorySelector = document.getElementById('categorySelector');
+            const selectedCategoryId = categorySelector.value;
+            
+            // Calculate date range based on time period
+            const { startDate, endDate } = getDateRangeByPeriod(timePeriod);
+            
+            // Fetch budget with category and date range
+            if (selectedCategoryId) {
+                fetchBudgetByFilters(selectedCategoryId, startDate, endDate);
+            } else {
+                fetchBudgetByFilters(null, startDate, endDate);
+            }
+        }
+
+        // Calculate date range based on time period
+        function getDateRangeByPeriod(period) {
+            const today = new Date();
+            let startDate, endDate;
+            
+            endDate = today.toISOString().split('T')[0]; // Today's date in YYYY-MM-DD
+            
+            switch(period) {
+                case 'daily':
+                    // Current day only
+                    startDate = endDate;
+                    break;
+                case 'monthly':
+                    // Current month
+                    startDate = new Date(today.getFullYear(), today.getMonth(), 1)
+                        .toISOString().split('T')[0];
+                    break;
+                case 'yearly':
+                    // Current year
+                    startDate = new Date(today.getFullYear(), 0, 1)
+                        .toISOString().split('T')[0];
+                    break;
+                default:
+                    startDate = null;
+                    endDate = null;
+            }
+            
+            return { startDate, endDate };
+        }
+
+        function updateBudgetChartByCategory(categoryId) {
+            // Find the category data
+            const categoryData = budgetData.categories.find(cat => cat.categoryID == categoryId);
+
+            if (categoryData) {
+                // Update chart with category-specific data
+                updateBudgetChart(categoryData.total, categoryData.used, categoryData.categoryName);
+            } else {
+                // If no category found, fallback to total budget
+                updateBudgetChart(budgetData.total, budgetData.used);
             }
         }
 
@@ -509,29 +625,51 @@
             const categoryFilter = document.getElementById('categoryFilter');
             const categorySelector = document.getElementById('categorySelector');
             categorySelector.value = categoryFilter.value;
-            updateBudgetByCategory();
+            showBudgetOnCharts(categorySelector.value);
         }
 
         function applyFilters(event) {
             event.preventDefault();
             const categoryFilter = document.getElementById('categoryFilter').value;
-            const firstRange = document.getElementById('firstRange').value;
-            const secondRange = document.getElementById('secondRange').value;
-            
+            const startDate = document.getElementById('globalStartDate').value;
+            const endDate = document.getElementById('globalEndDate').value;
+
             // Sync category selector
             syncCategorySelector();
-            
-            // Apply filters to chart (replace with actual API call to get filtered data)
-            // For now, just updating the chart with current data
-            updateBudgetByCategory();
-            
+
+            // Fetch budget data with filters
+            fetchBudgetByFilters(categoryFilter || null, startDate || null, endDate || null);
+
             // The form submission will handle table filtering on backend
-            // For client-side demo, you could filter the table here too
             return true; // Allow form to submit normally
         }
 
-        // Initialize charts with sample data
-        updateBudgetChart(budgetData.total, budgetData.used);
+        // Function to show budget on charts
+        function showBudgetOnCharts(selectedCategoryId = null) {
+            if (selectedCategoryId === null || selectedCategoryId === '') {
+                // Show overall budget
+                updateBudgetChart(budgetData.total, budgetData.used);
+            } else {
+                // Show category-specific budget
+                updateBudgetChartByCategory(selectedCategoryId);
+            }
+        }
+
+        // Function to refresh budget charts with new data
+        function refreshBudgetCharts(newBudgetData = null) {
+            if (newBudgetData) {
+                budgetData = newBudgetData;
+            }
+
+            const categorySelector = document.getElementById('categorySelector');
+            const selectedCategoryId = categorySelector ? categorySelector.value : null;
+            showBudgetOnCharts(selectedCategoryId);
+        }
+
+        // Initialize charts on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            showBudgetOnCharts();
+        });
 
         function confirmDelete(budgetId, budgetName) {
             if (confirm(`Are you sure you want to delete the budget "${budgetName}"? This action cannot be undone.`)) {

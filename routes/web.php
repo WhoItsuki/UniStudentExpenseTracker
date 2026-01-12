@@ -56,13 +56,15 @@ Route::middleware('student.auth')->group(function () {
     Route::post('/addExpense', [expenseController::class, 'addExpense']);
     Route::put('/expense/{expenseID}', [expenseController::class, 'updateExpense']);
     Route::delete('/expense/{expenseID}', [expenseController::class, 'deleteExpense']);
+    Route::get('/viewExpenses', [expenseController::class, 'viewExpenses']);
 
     //Routes for budget
     Route::get('/budget', [budgetController::class, 'viewBudgets']);
+    Route::get('/api/budget/fetch-filters', [budgetController::class, 'fetchBudgetByFilters']);
     Route::post('/addBudget', [budgetController::class, 'addBudget']);
     Route::put('/budget/{budgetID}', [budgetController::class, 'updateBudget']);
     Route::delete('/budget/{budgetID}', [budgetController::class, 'deleteBudget']);
-
+    Route::get('/viewBudget', [budgetController::class, 'viewBudgets']);
 });
 
 
