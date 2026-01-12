@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ asset('js/chart.js') }}" defer></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Student Categories</title>
     <style>
         table th,
@@ -52,12 +52,26 @@
         <br><br>
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap">
             <div class="px-4 py-6 sm:px-0 w-full">
+                @if($errors->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        <ul>
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                @if(session('success'))
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <div class="bg-white rounded-lg shadow p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Categories</h2>
-                    <p class="text-gray-600 mb-4">Manage your expense and income categories here.</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-tags mr-2"></i>Categories</h2>
+                    <p class="text-gray-600 mb-4"><i class="fas fa-cogs mr-1"></i>Manage your expense and income categories here.</p>
                     <div class="w-100 h-100 flex flex-row gap-4"> 
                         <div class="w-50 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg" style="height: 500px;"> 
-                            <h6 class="font-semibold text-lg mb-3">Existing Categories</h6>
+                            <h6 class="font-semibold text-lg mb-3"><i class="fas fa-eye mr-1"></i>Existing Categories</h6>
                             <div class="overflow-auto w-100">
                                 <table class="border-collapse w-100 max-h-50 table-bordered border-2 border-black">
                                     <thead>
@@ -88,14 +102,14 @@
 
                         <div class="w-50 h-100 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg"> 
                             <h6 class="font-semibold text-lg mb-3">Add New Category</h6>
-                            <form action="/category" method="POST" class="flex flex-column w-75 px-5 py-2 gap-4">
+                            <form action="/addCategory" method="POST" class="flex flex-column w-75 px-5 py-2 gap-4">
                                 @csrf
                                 <div class="flex flex-row justify-between items-center">
                                     <label class="font-medium">Category Type:</label>
                                     <select name="categoryType" class="border-2 rounded-2 p-1" required>
                                         <option value="">Select Type</option>
-                                        <option value="income">Income</option>
-                                        <option value="expense">Expense/Budget</option>
+                                        <option value="Income">Income</option>
+                                        <option value="Expense">Expense/Budget</option>
                                     </select>
                                 </div>
                                 <div class="flex flex-row justify-between items-center">

@@ -61,23 +61,23 @@
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap">
             <div class="px-4 py-6 sm:px-0 w-full">
                 <div class="bg-white rounded-lg shadow p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Income</h2>
-                    <p class="text-gray-600">Manage your income here.</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-coins mr-2"></i>Income</h2>
+                    <p class="text-gray-600"><i class="fas fa-cogs mr-1"></i>Manage your income here.</p>
                     <div class="w-100 h-100 flex flex-row gap-4"> 
                         <div class="w-50 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg" style="height: 500px;"> 
-                            <h6>Recent incomes' transactions</h6>
+                            <h6><i class="fas fa-history mr-1"></i>Recent incomes' transactions</h6>
                             <div class="flex flex-row align-items-baseline gap-4 py-2">
                                 <form id="globalFilter" class="flex flex-wrap gap-3 items-end" onsubmit="submitGlobalFilter(event)">
                                     <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                        <label class="text-sm font-medium text-gray-700 mb-1"><i class="fas fa-calendar-alt mr-1"></i>Start Date</label>
                                         <input type="date" id="globalStartDate" name="start_date" class="border-2 rounded-lg p-2 text-sm" required>
                                     </div>
                                     <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                        <label class="text-sm font-medium text-gray-700 mb-1"><i class="fas fa-calendar-alt mr-1"></i>End Date</label>
                                         <input type="date" id="globalEndDate" name="end_date" class="border-2 rounded-lg p-2 text-sm" required>
                                     </div>
                                     <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-1">Time Frame</label>
+                                        <label class="text-sm font-medium text-gray-700 mb-1"><i class="fas fa-tags mr-1"></i>Time Frame</label>
                                         <select id="categoryFilter" name="categoryFilter" class="border-2 rounded-2 p-1 text-sm" onchange="syncCategorySelector()">
                                             <option value="">All category</option>
                                             @forelse($categories ?? [] as $category)

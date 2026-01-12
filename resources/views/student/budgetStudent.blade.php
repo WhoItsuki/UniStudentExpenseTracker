@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ asset('js/chart.js') }}" defer></script>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Student Budgets</title>
     <style>
         table th,
@@ -52,6 +52,20 @@
         <br><br>
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap">
             <div class="px-4 py-6 sm:px-0 w-full">
+                @if($errors->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        <ul>
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                @if(session('success'))
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <div class="bg-white rounded-lg shadow p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Budgets</h2>
                     <p class="text-gray-600 mb-4">Manage your budgets here.</p>
@@ -122,23 +136,21 @@
 
                             <h6 class="font-semibold text-lg mb-2">Recent Budget Transactions</h6>
                             <div class="flex flex-row align-items-baseline gap-4 py-2">
-                                <form id="globalFilter" class="flex flex-wrap gap-3 items-end" onsubmit="submitGlobalFilter(event)">
+                                <form id="globalFilter" class="flex flex-wrap gap-3 items-end" method="GET" action="/viewBudgets">
                                     <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                                        <input type="date" id="globalStartDate" name="start_date" class="border-2 rounded-lg p-2 text-sm" required>
+                                        <input type="date" id="globalStartDate" name="start_date" class="border-2 rounded-lg p-2 text-sm" value="{{ request('start_date') }}">
                                     </div>
                                     <div class="flex flex-col">
                                         <label class="text-sm font-medium text-gray-700 mb-1">End Date</label>
-                                        <input type="date" id="globalEndDate" name="end_date" class="border-2 rounded-lg p-2 text-sm" required>
+                                        <input type="date" id="globalEndDate" name="end_date" class="border-2 rounded-lg p-2 text-sm" value="{{ request('end_date') }}">
                                     </div>
                                     <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-1">Time Frame</label>
-                                        <select id="categoryFilter" name="categoryFilter" class="border-2 rounded-2 p-1 text-sm" onchange="syncCategorySelector()">
+                                        <label class="text-sm font-medium text-gray-700 mb-1">Category</label>
+                                        <select id="categoryFilter" name="categoryFilter" class="border-2 rounded-2 p-1 text-sm">
                                             <option value="">All category</option>
                                             @forelse($categories ?? [] as $category)
-                                                @if($category->categoryType === 'Expense' || $category->categoryType === 'budget')
-                                                    <option value="{{ $category->categoryID }}">{{ $category->categoryName }}</option>
-                                                @endif   
+                                                <option value="{{ $category->categoryID }}" {{ request('categoryFilter') == $category->categoryID ? 'selected' : '' }}>{{ $category->categoryName }}</option>
                                             @empty
                                             <option value="">No categories available</option>
                                             @endforelse
@@ -148,6 +160,11 @@
                                         <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">
                                             Apply Filters
                                         </button>
+                                    </div>
+                                    <div>
+                                        <a href="/viewBudgets" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-sm font-medium inline-block">
+                                            Reset
+                                        </a>
                                     </div>
                                 </form>
                             </div>
@@ -167,73 +184,117 @@
                                         @forelse($budgets ?? [] as $budget)
                                         <tr>
                                             <td>{{ $budget->budgetName }}</td>
-                                            <td>{{ date('d-m-Y', strtotime($budget->budgetDate)) }}</td>
-                                            <td>{{ $budget->category->categoryName ?? 'N/A' }}</td>
+                                            <td>{{ $budget->budgetDate->format('d-m-Y') }}</td>
+                                            <td>{{ $budget->category->categoryName ?? '-' }}</td>
                                             <td>RM{{ number_format($budget->budgetLimit, 2) }}</td>
                                             <td>
-                                                <button onclick="confirmDelete({{ $budget->budgetID }}, '{{ $budget->budgetName }}')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm">Delete</button>
+                                                <button type="button" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm open-edit-budget-modal"
+                                                    onclick="openEditBudgetModal({
+                                                        budgetID: '{{ $budget->budgetID }}',
+                                                        budgetName: '{{ addslashes($budget->budgetName) }}',
+                                                        budgetLimit: '{{ $budget->budgetLimit }}',
+                                                        categoryID: '{{ $budget->categoryID }}',
+                                                        budgetDate: '{{ $budget->budgetDate->format('Y-m-d') }}'
+                                                    })">
+                                                    Edit
+                                                </button>
+                                                <form action="/budget/{{ $budget->budgetID }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1" onclick="return confirm('Are you sure you want to delete this budget?')">Delete</button>
+                                                </form>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td>Lunch</td>
-                                            <td>21-10-2026</td>
-                                            <td>Food</td>
-                                            <td>RM21.00</td>
-                                            <td>
-                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 2)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm">Edit</button>
-                                                <button onclick="confirmDelete(2, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1">Delete</button>
-                                            </td>
-                                        </tr
                                         @empty
                                         <tr>
-                                            <td colspan="5" class="text-center text-gray-500">No budgets found. Create your first budget below.</td>
+                                            <td colspan="5" class="text-center text-gray-500">No budgets found.</td>
                                         </tr>
                                         @endforelse
                                     </tbody>
                                 </table>
                             </div>
+                            <br>
+                            <h6>Total budgets : RM{{ number_format($totalBudgets ?? 0, 2) }}</h6>
                         </div>
 
                         <div class="w-50 h-100 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg"> 
-                            <h6 class="font-semibold text-lg mb-3">Add New Budget</h6>
-                            <form action="/budget" method="POST" class="flex flex-column w-75 px-5 py-2 gap-4">
+                            <h6>Add new budget</h6>
+                            <form action="/addBudget" method="POST" class="flex flex-column w-75 px-5 py-2 gap-4">
                                 @csrf
-                                <div class="flex flex-row justify-between items-center">
-                                    <label class="font-medium">Budget Name:</label>
+                                <div class="flex flex-row justify-between">
+                                    <label>Budget Name:</label>
                                     <input type="text" name="budgetName" class="border-2 rounded-2 p-1" required>
                                 </div>
-                                <div class="flex flex-row justify-between items-center">
-                                    <label class="font-medium">Budget Limit:</label>
-                                    <input type="number" name="budgetLimit" step="0.01" min="0" class="border-2 rounded-2 p-1" required>
+                                <div class="flex flex-row justify-between">
+                                    <label>Budget Limit:</label>
+                                    <input type="number" name="budgetLimit" class="border-2 rounded-2 p-1" step="0.01" required>
                                 </div>
-                                <div class="flex flex-row justify-between items-center">
-                                    <label class="font-medium">Budget Date:</label>
-                                    <input type="date" name="budgetDate" class="border-2 rounded-2 p-1" required>
-                                </div>
-                                <div class="flex flex-row justify-between items-center">
-                                    <label class="font-medium">Category Name:</label>
+                                <div class="flex flex-row justify-between">
+                                    <label>Budget Category:</label>
                                     <select name="categoryID" class="border-2 rounded-2 p-1" required>
                                         <option value="">Select Category</option>
                                         @forelse($categories ?? [] as $category)
-                                            @if($category->categoryType === 'expense' || $category->categoryType === 'budget')
-                                                <option value="{{ $category->categoryID }}">{{ $category->categoryName }}</option>
-                                            @endif
+                                            <option value="{{ $category->categoryID }}">{{ $category->categoryName }}</option>
                                         @empty
-                                            <option value="">No categories available</option>
+                                        <option value="">No categories available</option>
                                         @endforelse
                                     </select>
                                 </div>
-                                
-                                <div class="flex flex-col align-items-center mt-4"> 
-                                    <input type="submit" class="p-1 rounded-2 bg-blue-600 text-white hover:bg-blue-800 w-25 cursor-pointer" value="Submit">
+                                <div class="flex flex-row justify-between">
+                                    <label>Budget Date:</label>
+                                    <input type="date" name="budgetDate" class="border-2 rounded-2 p-1" required>
                                 </div>
-                                
+                                <div class="flex flex-col align-items-center"> 
+                                    <input type="submit" class="p-1 rounded-2 bg-blue-600 text-white hover:bg-blue-800 w-25" value="Submit">
+                                </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Edit Budget Modal -->
+    <div id="editBudgetModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 items-center justify-center z-50" style="display: none;">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Edit Budget</h3>
+                <button type="button" onclick="closeEditBudgetModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <form id="editBudgetForm" method="POST">
+                @csrf
+                @method('PUT')
+                <input type="hidden" id="editBudgetId" name="budgetID">
+                <div class="flex flex-col gap-1">
+                    <label class="text-sm font-medium text-gray-700">Budget Name:</label>
+                    <input type="text" id="editBudgetName" name="budgetName" class="border-2 rounded-lg p-2" required>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-sm font-medium text-gray-700">Budget Limit:</label>
+                    <input type="number" id="editBudgetLimit" name="budgetLimit" class="border-2 rounded-lg p-2" step="0.01" required>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-sm font-medium text-gray-700">Budget Category:</label>
+                    <select id="editBudgetCategory" name="categoryID" class="border-2 rounded-lg p-2" required>
+                        <option value="">Select Category</option>
+                        @forelse($categories ?? [] as $category)
+                            <option value="{{ $category->categoryID }}">{{ $category->categoryName }}</option>
+                        @empty
+                        <option value="">No categories available</option>
+                        @endforelse
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-sm font-medium text-gray-700">Budget Date:</label>
+                    <input type="date" id="editBudgetDate" name="budgetDate" class="border-2 rounded-lg p-2" required>
+                </div>
+                <div class="flex gap-2 justify-end mt-4">
+                    <button type="button" onclick="closeEditBudgetModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Update</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -411,6 +472,19 @@
             });
         }
 
+        function updateBudgetChartByCategory(categoryId) {
+            // Find the category data
+            const categoryData = budgetData.categories.find(cat => cat.categoryID == categoryId);
+            
+            if (categoryData) {
+                // Update chart with category data
+                updateBudgetChart(categoryData.total, categoryData.used, categoryData.categoryName);
+            } else {
+                // If no category found, fallback to total budget
+                updateBudgetChart(budgetData.total, budgetData.used);
+            }
+        }
+
         function updateBudgetByCategory() {
             const categorySelector = document.getElementById('categorySelector');
             const selectedCategoryId = categorySelector.value;
@@ -484,6 +558,35 @@
                 form.submit();
             }
         }
+
+        // Edit Budget Modal
+        function openEditBudgetModal(budget) {
+            document.getElementById('editBudgetId').value = budget.budgetID;
+            document.getElementById('editBudgetName').value = budget.budgetName;
+            document.getElementById('editBudgetLimit').value = budget.budgetLimit;
+            document.getElementById('editBudgetCategory').value = budget.categoryID;
+            document.getElementById('editBudgetDate').value = budget.budgetDate;
+            document.getElementById('editBudgetForm').action = `/budget/${budget.budgetID}`;
+            document.getElementById('editBudgetModal').style.display = 'flex';
+        }
+        function closeEditBudgetModal() {
+            document.getElementById('editBudgetModal').style.display = 'none';
+        }
+        // Close modal when clicking outside
+        document.getElementById('editBudgetModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditBudgetModal();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.open-edit-budget-modal').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const budget = JSON.parse(this.getAttribute('data-budget'));
+            openEditBudgetModal(budget);
+        });
+    });
+});
     </script>
 </body>
 </html>

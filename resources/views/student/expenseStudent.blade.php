@@ -60,30 +60,42 @@
         <br><br>
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap">
             <div class="px-4 py-6 sm:px-0 w-full">
+                @if($errors->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        <ul>
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                @if(session('success'))
+                    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <div class="bg-white rounded-lg shadow p-6">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Expenses</h2>
-                    <p class="text-gray-600">Manage your expenses here.</p>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-wallet mr-2"></i>Expenses</h2>
+                    <p class="text-gray-600"><i class="fas fa-cogs mr-1"></i>Manage your expenses here.</p>
                     <div class="w-100 h-100 flex flex-row gap-4"> 
                         <div class="w-50 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg" style="height: 500px;"> 
-                            <h6>Recent expenses' transactions</h6>
+                            <h6><i class="fas fa-history mr-1"></i>Recent expenses' transactions</h6>
                             <div class="flex flex-row align-items-baseline gap-4 py-2">
-                                <form id="globalFilter" class="flex flex-wrap gap-3 items-end" onsubmit="submitGlobalFilter(event)">
+                                <form id="globalFilter" class="flex flex-wrap gap-3 items-end" method="GET" action="/viewExpenses">
                                     <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-1">Start Date</label>
-                                        <input type="date" id="globalStartDate" name="start_date" class="border-2 rounded-lg p-2 text-sm" required>
+                                        <label class="text-sm font-medium text-gray-700 mb-1"><i class="fas fa-calendar-alt mr-1"></i>Start Date</label>
+                                        <input type="date" id="globalStartDate" name="start_date" class="border-2 rounded-lg p-2 text-sm" value="{{ request('start_date') }}">
                                     </div>
                                     <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-1">End Date</label>
-                                        <input type="date" id="globalEndDate" name="end_date" class="border-2 rounded-lg p-2 text-sm" required>
+                                        <label class="text-sm font-medium text-gray-700 mb-1"><i class="fas fa-calendar-alt mr-1"></i>End Date</label>
+                                        <input type="date" id="globalEndDate" name="end_date" class="border-2 rounded-lg p-2 text-sm" value="{{ request('end_date') }}">
                                     </div>
                                     <div class="flex flex-col">
-                                        <label class="text-sm font-medium text-gray-700 mb-1">Time Frame</label>
-                                        <select id="categoryFilter" name="categoryFilter" class="border-2 rounded-2 p-1 text-sm" onchange="syncCategorySelector()">
+                                        <label class="text-sm font-medium text-gray-700 mb-1"><i class="fas fa-tags mr-1"></i>Category</label>
+                                        <select id="categoryFilter" name="categoryFilter" class="border-2 rounded-2 p-1 text-sm">
                                             <option value="">All category</option>
                                             @forelse($categories ?? [] as $category)
-                                                @if($category->categoryType === 'expense' || $category->categoryType === 'budget')
-                                                    <option value="{{ $category->categoryID }}">{{ $category->categoryName }}</option>
-                                                @endif   
+                                                <option value="{{ $category->categoryID }}" {{ request('categoryFilter') == $category->categoryID ? 'selected' : '' }}>{{ $category->categoryName }}</option>
                                             @empty
                                             <option value="">No categories available</option>
                                             @endforelse
@@ -93,6 +105,11 @@
                                         <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">
                                             <i class="fas fa-filter mr-1"></i>Apply Filters
                                         </button>
+                                    </div>
+                                    <div>
+                                        <a href="/viewExpenses" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-sm font-medium inline-block">
+                                            <i class="fas fa-undo mr-1"></i>Reset
+                                        </a>
                                     </div>
                                 </form>
                             </div>
@@ -109,66 +126,60 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        @forelse($expenses ?? [] as $expense)
                                         <tr>
-                                            <td>Lunch</td>
-                                            <td>21-10-2026</td>
-                                            <td>Food</td>
-                                            <td>RM21.00</td>
+                                            <td>{{ $expense->expenseName }}</td>
+                                            <td>{{ $expense->expenseDate->format('d-m-Y') }}</td>
+                                            <td>{{ $expense->category->categoryName ?? '-' }}</td>
+                                            <td>RM{{ number_format($expense->expenseAmount, 2) }}</td>
                                             <td>
-                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 1)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm"><i class="fas fa-edit mr-1"></i>Edit</button>
-                                                <button onclick="confirmDelete(1, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1"><i class="fas fa-trash mr-1"></i>Delete</button>
+                                                <button onclick="openEditModal('{{ $expense->expenseName }}', '{{ $expense->expenseDate->format('d-m-Y') }}', '{{ $expense->category->categoryName ?? '-' }}', 'RM{{ number_format($expense->expenseAmount, 2) }}', {{ $expense->expenseID }})" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm"><i class="fas fa-edit mr-1"></i>Edit</button>
+                                                <form action="/expense/{{ $expense->expenseID }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1" onclick="return confirm('Are you sure you want to delete this expense?')"><i class="fas fa-trash mr-1"></i>Delete</button>
+                                                </form>
                                             </td>
                                         </tr>
+                                        @empty
                                         <tr>
-                                            <td>Lunch</td>
-                                            <td>21-10-2026</td>
-                                            <td>Food</td>
-                                            <td>RM21.00</td>
-                                            <td>
-                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 2)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm"><i class="fas fa-edit mr-1"></i>Edit</button>
-                                                <button onclick="confirmDelete(2, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1"><i class="fas fa-trash mr-1"></i>Delete</button>
-                                            </td>
+                                            <td colspan="5" class="text-center text-gray-500">No expenses found.</td>
                                         </tr>
-                                        <tr>
-                                            <td>Lunch</td>
-                                            <td>21-10-2026</td>
-                                            <td>Food</td>
-                                            <td>RM21.00</td>
-                                            <td>
-                                                <button onclick="openEditModal('Lunch', '21-10-2026', 'Food', 'RM21.00', 3)" class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700 text-sm"><i class="fas fa-edit mr-1"></i>Edit</button>
-                                                <button onclick="confirmDelete(3, 'Lunch')" class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700 text-sm ml-1"><i class="fas fa-trash mr-1"></i>Delete</button>
-                                            </td>
-                                        </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>
                             <br>
-                            <h6>Total expenses : RM63.00</h6>
+                            <h6>Total expenses : RM{{ number_format($totalExpenses ?? 0, 2) }}</h6>
                             
                         </div>
 
                         <div class="w-50 h-100 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg"> 
                             <h6>Add new expense</h6>
-                            <form class="flex flex-column w-75 px-5 py-2 gap-4">
+                            <form action="/addExpense" method="POST" class="flex flex-column w-75 px-5 py-2 gap-4">
+                                @csrf
                                 <div class="flex flex-row justify-between">
                                     <label>Expense's Name:</label>
-                                    <input type="text" class="border-2 rounded-2 p-1">
+                                    <input type="text" name="expenseName" class="border-2 rounded-2 p-1" required>
                                 </div>
                                 <div class="flex flex-row justify-between">
                                     <label>Expense's Amount:</label>
-                                    <input type="text" class="border-2 rounded-2 p-1">
+                                    <input type="number" name="expenseAmount" class="border-2 rounded-2 p-1" step="0.01" required>
                                 </div>
                                 <div class="flex flex-row justify-between">
                                     <label>Expense's Category:</label>
-                                    <select class="border-2 rounded-2 p-1">
-                                        <option value="">Entertainment</option>
-                                        <option value="">Food</option>
-                                        <option value="">Transportation</option>
+                                    <select name="categoryID" class="border-2 rounded-2 p-1" required>
+                                        <option value="">Select Category</option>
+                                        @forelse($categories ?? [] as $category)
+                                            <option value="{{ $category->categoryID }}">{{ $category->categoryName }}</option>
+                                        @empty
+                                        <option value="">No categories available</option>
+                                        @endforelse
                                     </select>
                                 </div>
                                 <div class="flex flex-row justify-between">
                                     <label>Expense's Date:</label>
-                                    <input type="date" class="border-2 rounded-2 p-1">
+                                    <input type="date" name="expenseDate" class="border-2 rounded-2 p-1" required>
                                 </div>
                                 
                                 <div class="flex flex-col align-items-center"> 
@@ -188,28 +199,34 @@
         <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-gray-800">Edit Expense</h3>
-                <button onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                <button type="button" onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
             </div>
-            <form id="editExpenseForm" class="flex flex-col gap-4">
+            <form id="editExpenseForm" method="POST" class="flex flex-col gap-4">
+                @csrf
+                @method('PUT')
+                <input type="hidden" id="expenseIdInput" name="expenseID">
                 <div class="flex flex-col gap-1">
                     <label class="text-sm font-medium text-gray-700">Expense Name:</label>
-                    <input type="text" id="editExpenseName" class="border-2 rounded-lg p-2" required>
+                    <input type="text" id="editExpenseName" name="expenseName" class="border-2 rounded-lg p-2" required>
                 </div>
                 <div class="flex flex-col gap-1">
                     <label class="text-sm font-medium text-gray-700">Date:</label>
-                    <input type="date" id="editExpenseDate" class="border-2 rounded-lg p-2" required>
+                    <input type="date" id="editExpenseDate" name="expenseDate" class="border-2 rounded-lg p-2" required>
                 </div>
                 <div class="flex flex-col gap-1">
                     <label class="text-sm font-medium text-gray-700">Category:</label>
-                    <select id="editExpenseCategory" class="border-2 rounded-lg p-2" required>
-                        <option value="">Entertainment</option>
-                        <option value="">Food</option>
-                        <option value="">Transportation</option>
+                    <select id="editExpenseCategory" name="categoryID" class="border-2 rounded-lg p-2" required>
+                        <option value="">Select Category</option>
+                        @forelse($categories ?? [] as $category)
+                            <option value="{{ $category->categoryID }}">{{ $category->categoryName }}</option>
+                        @empty
+                        <option value="">No categories available</option>
+                        @endforelse
                     </select>
                 </div>
                 <div class="flex flex-col gap-1">
                     <label class="text-sm font-medium text-gray-700">Amount:</label>
-                    <input type="text" id="editExpenseAmount" class="border-2 rounded-lg p-2" required>
+                    <input type="number" id="editExpenseAmount" name="expenseAmount" class="border-2 rounded-lg p-2" step="0.01" required>
                 </div>
                 <div class="flex gap-2 justify-end mt-4">
                     <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">Cancel</button>
@@ -220,10 +237,8 @@
     </div>
 
     <script>
-        let currentExpenseId = null;
-
         function openEditModal(name, date, category, amount, expenseId) {
-            currentExpenseId = expenseId;
+            document.getElementById('expenseIdInput').value = expenseId;
             document.getElementById('editExpenseName').value = name;
             
             // Convert date from DD-MM-YYYY to YYYY-MM-DD format
@@ -244,17 +259,6 @@
 
         function closeEditModal() {
             document.getElementById('editModal').style.display = 'none';
-            currentExpenseId = null;
-        }
-
-        function confirmDelete(expenseId, expenseName) {
-            if (confirm(`Are you sure you want to delete the expense "${expenseName}"? This action cannot be undone.`)) {
-                // Handle delete action here
-                console.log('Deleting expense with ID:', expenseId);
-                // You can add AJAX call here to delete from backend
-                alert('Expense deleted successfully!');
-                // Optionally reload the page or remove the row from table
-            }
         }
 
         // Close modal when clicking outside
@@ -267,18 +271,9 @@
         // Handle form submission
         document.getElementById('editExpenseForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            // Handle update action here
-            console.log('Updating expense with ID:', currentExpenseId);
-            console.log('Updated data:', {
-                name: document.getElementById('editExpenseName').value,
-                date: document.getElementById('editExpenseDate').value,
-                category: document.getElementById('editExpenseCategory').value,
-                amount: document.getElementById('editExpenseAmount').value
-            });
-            // You can add AJAX call here to update in backend
-            alert('Expense updated successfully!');
-            closeEditModal();
-            // Optionally reload the page or update the row in table
+            const expenseId = document.getElementById('expenseIdInput').value;
+            this.action = `/expense/${expenseId}`;
+            this.submit();
         });
     </script>
 </body>

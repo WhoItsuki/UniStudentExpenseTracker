@@ -1,8 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\StudentController;
 use App\Http\Controllers\adminController;
+use App\Http\Controllers\budgetController;
+use App\Http\Controllers\expenseController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\categoryController;
 
 Route::get('/', function () {
     return view('student/loginStudent');
@@ -29,13 +32,9 @@ Route::middleware('student.auth')->group(function () {
         return view('student/dashboardStudent');
     });
 
-    Route::get('/expense', function(){
-        return view('student/expenseStudent');
-    });
 
-    Route::get('/budget', function(){
-        return view('student/budgetStudent');
-    });
+
+    
 
     Route::get('/income', function(){
         return view('student/incomeStudent');
@@ -44,9 +43,26 @@ Route::middleware('student.auth')->group(function () {
     Route::get('/profileStudent', [StudentController::class, 'profile']);
     Route::post('/profileStudent', [StudentController::class, 'updateProfile'])->name('student.updateProfile');
 
-    Route::get('/category', function(){
-        return view('student/category');
-    });
+    Route::get('/category', [categoryController::class, 'viewCategories']);
+
+    //Routes for category
+    Route::get('/viewCategories', [categoryController::class, 'viewCategories']);
+    Route::post('/addCategory', [categoryController::class, 'addCategory']);
+    Route::delete('/category/{categoryID}', [categoryController::class, 'deleteCategory']);
+    Route::put('/category/{categoryID}', [categoryController::class, 'updateCategory']);
+
+    //Routes for expense
+    Route::get('/expense', [expenseController::class, 'viewExpenses']);
+    Route::post('/addExpense', [expenseController::class, 'addExpense']);
+    Route::put('/expense/{expenseID}', [expenseController::class, 'updateExpense']);
+    Route::delete('/expense/{expenseID}', [expenseController::class, 'deleteExpense']);
+
+    //Routes for budget
+    Route::get('/budget', [budgetController::class, 'viewBudgets']);
+    Route::post('/addBudget', [budgetController::class, 'addBudget']);
+    Route::put('/budget/{budgetID}', [budgetController::class, 'updateBudget']);
+    Route::delete('/budget/{budgetID}', [budgetController::class, 'deleteBudget']);
+
 });
 
 

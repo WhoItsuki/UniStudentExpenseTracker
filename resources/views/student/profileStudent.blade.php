@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -23,7 +24,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <h1 class="text-xl font-bold text-gray-800">Student Expense Tracker</h1>
+                        <h1 class="text-xl font-bold text-gray-800"><i class="fas fa-graduation-cap mr-2"></i>Student Expense Tracker</h1>
                     </div>
                     <div class="flex items-center">
                         <ol class="flex items-center gap-20 list-none m-0 p-0">
@@ -118,7 +119,7 @@
                         </div>
                         <div class="w-50 flex flex-col gap-5">
                             <div class="flex flex-column rounded-2 items-center justify-baseline gap-3 border-2 m-0 p-2 hover:shadow-lg h-full">
-                                <h6 class="text-lg font-semibold text-gray-800 mb-4 text-center">Edit profile:</h6>
+                                <h6 class="text-lg font-semibold text-gray-800 mb-4 text-center"><i class="fas fa-user-edit mr-1"></i>Edit profile:</h6>
                                 <form action="{{ route('student.updateProfile') }}" method="POST" class="w-75 flex flex-column gap-4">
                                     @csrf
                                     <div class="flex justify-between">
