@@ -13,8 +13,10 @@ class studentController extends Controller
         $validatedData = $request->validate([
             'studentFname' => 'required|string|max:255',
             'studentLname' => 'required|string|max:255',
-            'studentEmail' => 'required|email|unique:student,studentEmail',
-            'studentID' => 'required|string|unique:student,studentID',
+            'programme' => 'required|string|max:255',
+            'studentFaculty' => 'required|string|max:255',
+            'studentEmail' => 'required|email|unique:students,studentEmail',
+            'studentID' => 'required|string|unique:students,studentID',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -25,19 +27,88 @@ class studentController extends Controller
     {
         //Validate the incoming data
         $credentials = $request->validate([
-            'studentEmail' => 'required|email',
+            'studentID' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        // Attempt to find the student by email
-        $student = Student::where('studentEmail', $credentials['studentEmail'])->first();
+        // Attempt to find the student by studentID (not email as per login form)
+        $student = Student::where('studentID', $credentials['studentID'])->first();
 
-        if ($student && password_verify($credentials['password'], $student->password)) {
-            // Authentication passed
-            return response()->json(['message' => 'Login successful'], 200);
+        if ($student && $credentials['password'] === $student->password) {
+            // Authentication passed - store student info in session
+            session([
+                'student_logged_in' => true,
+                'student_id' => $student->studentID,
+                'student_name' => $student->studentFname . ' ' . $student->studentLname,
+                'student_email' => $student->studentEmail,
+            ]);
+
+            return redirect('/dashboardStudent')->with('success', 'Login successful! Welcome ' . $student->studentFname . ' ' . $student->studentLname);
         } else {
             // Authentication failed
-            return response()->json(['message' => 'Invalid credentials'], 401);
+            return back()->withErrors(['login' => 'Invalid student ID or password']);
         }
+    }
+
+    public function logout(Request $request)
+    {
+        // Clear all student session data
+        session()->forget(['student_logged_in', 'student_id', 'student_name', 'student_email']);
+
+        return redirect('/loginStudent')->with('success', 'You have been logged out successfully');
+    }
+
+    public function profile(Request $request)
+    {
+        // Get the logged-in student's data
+        $student = Student::where('studentID', session('student_id'))->first();
+
+        if (!$student) {
+            return redirect('/loginStudent')->withErrors(['auth' => 'Student not found']);
+        }
+
+        return view('student.profileStudent', compact('student'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        // Validate the incoming data
+        $validatedData = $request->validate([
+            'studentFname' => 'required|string|max:255',
+            'studentLname' => 'required|string|max:255',
+            'programme' => 'required|string|max:255',
+            'studentFaculty' => 'required|string|max:255',
+            'studentEmail' => 'required|email|unique:students,studentEmail,' . session('student_id') . ',studentID',
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        // Get the logged-in student's data
+        $student = Student::where('studentID', session('student_id'))->first();
+
+        if (!$student) {
+            return redirect('/loginStudent')->withErrors(['auth' => 'Student not found']);
+        }
+
+        // Update student data
+        $student->studentFname = $validatedData['studentFname'];
+        $student->studentLname = $validatedData['studentLname'];
+        $student->programme = $validatedData['programme'];
+        $student->studentFaculty = $validatedData['studentFaculty'];
+        $student->studentEmail = $validatedData['studentEmail'];
+
+        // Only update password if provided
+        if (!empty($validatedData['password'])) {
+            $student->password = $validatedData['password'];
+        }
+
+        $student->save();
+
+        // Update session data
+        session([
+            'student_name' => $student->studentFname . ' ' . $student->studentLname,
+            'student_email' => $student->studentEmail,
+        ]);
+
+        return redirect('/profileStudent')->with('success', 'Profile updated successfully!');
     }
 }

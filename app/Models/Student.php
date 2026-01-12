@@ -8,6 +8,9 @@ class Student extends Model
 
 {
     protected $table = 'students'; // Fixed table name to match migration
+    protected $primaryKey = 'studentID';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'studentFname',

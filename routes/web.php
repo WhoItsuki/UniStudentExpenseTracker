@@ -23,29 +23,30 @@ Route::get('/signupStudent', function () {
 
 
 
-//Routes student navigation bar
-Route::get('/dashboardStudent', function () {
-    return view('student/dashboardStudent');
-});
+//Routes student navigation bar (protected by student authentication)
+Route::middleware('student.auth')->group(function () {
+    Route::get('/dashboardStudent', function () {
+        return view('student/dashboardStudent');
+    });
 
-Route::get('/expense', function(){
-    return view('student/expenseStudent');
-});
+    Route::get('/expense', function(){
+        return view('student/expenseStudent');
+    });
 
-Route::get('/budget', function(){
-    return view('student/budgetStudent');
-});
+    Route::get('/budget', function(){
+        return view('student/budgetStudent');
+    });
 
-Route::get('/income', function(){
-    return view('student/incomeStudent');
-});
+    Route::get('/income', function(){
+        return view('student/incomeStudent');
+    });
 
-Route::get('/profileStudent', function(){
-    return view('student/profileStudent');
-});
+    Route::get('/profileStudent', [StudentController::class, 'profile']);
+    Route::post('/profileStudent', [StudentController::class, 'updateProfile'])->name('student.updateProfile');
 
-Route::get('/category', function(){
-    return view('student/category');
+    Route::get('/category', function(){
+        return view('student/category');
+    });
 });
 
 
@@ -62,4 +63,4 @@ Route::get('/admin/student/{studentID}/details', [adminController::class, 'getSt
 //Student function
 Route::post('studentSignup', [StudentController::class, 'signUp']);
 Route::post('studentLogin', [StudentController::class, 'login']);
-Route::post('studentLogout', [StudentController::class, 'logout']);
+Route::post('studentLogout', [StudentController::class, 'logout'])->name('student.logout');

@@ -27,6 +27,9 @@
     
 </head>
 <body class="bg-gray-100">
+    @if(!session('student_name'))
+        <script>window.location.href = '/loginStudent';</script>
+    @endif
     <div class="min-h-screen">
         <nav class="bg-white shadow-md fixed-top">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,11 +47,12 @@
                             <li class="m-0 p-0"><a href="/category" class="text-blue-500 no-underline hover:text-blue-900 hover:underline"><i class="fas fa-tags mr-2"></i>Category</a></li>
                         </ol>
                     </div>
-                    <div class="flex items-center">
-                            <form action="" method="POST" class="inline">
-                                @csrf
-                                <button type="submit" class="text-red-600 hover:text-red-800 border-none bg-transparent cursor-pointer"><i class="fas fa-sign-out-alt mr-1"></i>Logout</button>
-                            </form>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-700"><i class="fas fa-user-circle mr-2"></i>{{ session('student_name') }}</span>
+                        <form action="{{ route('student.logout') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="text-red-600 hover:text-red-800 border-none bg-transparent cursor-pointer"><i class="fas fa-sign-out-alt mr-1"></i>Logout</button>
+                        </form>
                     </div>
                 </div>
             </div>

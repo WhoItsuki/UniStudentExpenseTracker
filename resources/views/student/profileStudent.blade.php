@@ -15,6 +15,9 @@
     <title>Student Dashboard</title>
 </head>
 <body class="bg-gray-100">
+    @if(!session('student_name'))
+        <script>window.location.href = '/loginStudent';</script>
+    @endif
     <div class="min-h-screen">
         <nav class="bg-white shadow-md fixed-top">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,8 +35,12 @@
                             <li class="m-0 p-0"><a href="/category" class="text-blue-500 no-underline hover:text-blue-900 hover:underline"><i class="fas fa-tags mr-2"></i>Category</a></li>
                         </ol>
                     </div>
-                    <div class="flex items-center">
-                            <a href="#" class="text-red-600 hover:text-red-800"><i class="fas fa-sign-out-alt mr-1"></i>Logout</a>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-700"><i class="fas fa-user-circle mr-2"></i>{{ session('student_name') }}</span>
+                        <form action="{{ route('student.logout') }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="text-red-600 hover:text-red-800 no-underline"><i class="fas fa-sign-out-alt mr-1"></i>Logout</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -43,6 +50,23 @@
             <div class="px-4 py-6 sm:px-0 w-full">
                 <div class="bg-white rounded-lg shadow p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Profile</h2>
+
+                    @if(session('success'))
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                            <ul>
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <p class="text-gray-600">Manage your profile.</p>
 
                     <div class="m-0 flex items-stretch gap-4 p-0 flex-between">
@@ -52,25 +76,25 @@
                                 <!-- Full Name -->
                                 <div class="flex flex-col gap-1">
                                     <label class="text-sm font-medium text-gray-600">Full Name:</label>
-                                    <div class="text-gray-800 font-medium">Ahmad Albab</div>
+                                    <div class="text-gray-800 font-medium">{{ $student->studentFname . ' ' . $student->studentLname }}</div>
                                 </div>
                                 
                                 <!-- Programme -->
                                 <div class="flex flex-col gap-1">
                                     <label class="text-sm font-medium text-gray-600">Programme:</label>
-                                    <div class="text-gray-800 font-medium">Information Technology</div>
+                                    <div class="text-gray-800 font-medium">{{ $student->programme }}</div>
                                 </div>
-                                
+
                                 <!-- Faculty -->
                                 <div class="flex flex-col gap-1">
                                     <label class="text-sm font-medium text-gray-600">Faculty:</label>
-                                    <div class="text-gray-800 font-medium">Faculty of Computing</div>
+                                    <div class="text-gray-800 font-medium">{{ $student->studentFaculty }}</div>
                                 </div>
-                                
+
                                 <!-- Email -->
                                 <div class="flex flex-col gap-1">
                                     <label class="text-sm font-medium text-gray-600">Email:</label>
-                                    <div class="text-gray-800 font-medium">example@gmail.com</div>
+                                    <div class="text-gray-800 font-medium">{{ $student->studentEmail }}</div>
                                 </div>
                                 
                                 <!-- Password -->
@@ -95,35 +119,50 @@
                         <div class="w-50 flex flex-col gap-5">
                             <div class="flex flex-column rounded-2 items-center justify-baseline gap-3 border-2 m-0 p-2 hover:shadow-lg h-full">
                                 <h6 class="text-lg font-semibold text-gray-800 mb-4 text-center">Edit profile:</h6>
-                                <form method="" class="w-75 flex flex-column gap-4">
+                                <form action="{{ route('student.updateProfile') }}" method="POST" class="w-75 flex flex-column gap-4">
+                                    @csrf
                                     <div class="flex justify-between">
                                         <label>New First Name:</label>
-                                        <input class="border-2 p-1 rounded-2" type="text" value="Ahmad">
+                                        <input class="border-2 p-1 rounded-2" type="text" name="studentFname" value="{{ $student->studentFname }}" required>
                                     </div>
                                     <div class="flex justify-between">
                                         <label >New Last Name:</label>
-                                        <input class="border-2 p-1 rounded-2" type="text" value="Albab">
+                                        <input class="border-2 p-1 rounded-2" type="text" name="studentLname" value="{{ $student->studentLname }}" required>
                                     </div>
                                     <div class="flex justify-between">
                                         <label>New Programme:</label>
-                                    <input class="border-2 p-1 rounded-2" type="text" value="Information Technology">
+                                        <input class="border-2 p-1 rounded-2" type="text" name="programme" value="{{ $student->programme }}" required>
                                     </div>
                                     <div class="flex justify-between">
                                         <label>New Faculty:</label>
-                                        <input class="border-2 p-1 rounded-2" type="text" value="Faculty of Computing">
+                                        <select class="border-2 p-1 rounded-2" name="studentFaculty" required>
+                                            <option value="">Select Faculty</option>
+                                            <option value="Faculty of Computing" {{ $student->studentFaculty == 'Faculty of Computing' ? 'selected' : '' }}>Faculty of Computing</option>
+                                            <option value="Faculty of Engineering" {{ $student->studentFaculty == 'Faculty of Engineering' ? 'selected' : '' }}>Faculty of Engineering</option>
+                                            <option value="Faculty of Business" {{ $student->studentFaculty == 'Faculty of Business' ? 'selected' : '' }}>Faculty of Business</option>
+                                            <option value="Faculty of Science" {{ $student->studentFaculty == 'Faculty of Science' ? 'selected' : '' }}>Faculty of Science</option>
+                                            <option value="Faculty of Arts" {{ $student->studentFaculty == 'Faculty of Arts' ? 'selected' : '' }}>Faculty of Arts</option>
+                                            <option value="Faculty of Medicine" {{ $student->studentFaculty == 'Faculty of Medicine' ? 'selected' : '' }}>Faculty of Medicine</option>
+                                            <option value="Faculty of Law" {{ $student->studentFaculty == 'Faculty of Law' ? 'selected' : '' }}>Faculty of Law</option>
+                                            <option value="Faculty of Education" {{ $student->studentFaculty == 'Faculty of Education' ? 'selected' : '' }}>Faculty of Education</option>
+                                            <option value="Faculty of Social Sciences" {{ $student->studentFaculty == 'Faculty of Social Sciences' ? 'selected' : '' }}>Faculty of Social Sciences</option>
+                                        </select>
                                     </div>
                                     <div class="flex justify-between">
                                         <label>New Email:</label>
-                                        <input class="border-2 p-1 rounded-2" type="email" value="example@gmail.com">        
+                                        <input class="border-2 p-1 rounded-2" type="email" name="studentEmail" value="{{ $student->studentEmail }}" required>
                                     </div>
                                     <div class="flex justify-between">
-                                        <label>New Password:</label>
-                                        <input class="border-2 p-1 rounded-2" type="password" value="example@gmail.com">    
+                                        <label>New Password (leave empty to keep current):</label>
+                                        <input class="border-2 p-1 rounded-2" type="password" name="password" placeholder="Enter new password">
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <label>Confirm New Password:</label>
+                                        <input class="border-2 p-1 rounded-2" type="password" name="password_confirmation" placeholder="Confirm new password">
                                     </div>
                                     <div class="flex flex-column items-center">
-                                        <input type="submit" value="Submit" class="p-1 rounded-2 bg-blue-600 text-white hover:bg-blue-800 w-25">
+                                        <input type="submit" value="Update Profile" class="p-1 rounded-2 bg-blue-600 text-white hover:bg-blue-800 w-25">
                                     </div>
-                                    
                                 </form>
                             </div>
 
@@ -145,7 +184,7 @@
             
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                passwordInput.value = 'examplePassword123'; // Replace with actual password when connected to backend
+                passwordInput.value = '{{ $student->password }}'; // Show actual password
                 toggleButton.textContent = 'Hide';
             } else {
                 passwordInput.type = 'password';
