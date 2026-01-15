@@ -30,7 +30,7 @@ class Admin extends Authenticatable
     protected function casts(): array
     {
         return [
-            'password' => 'hashed',
+            // Password stored as plain text as requested
         ];
     }
 }

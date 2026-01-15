@@ -18,7 +18,7 @@
     <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <h1 class="text-2xl font-bold text-center mb-6 text-gray-800"><i class="fas fa-shield-alt mr-2"></i>Administrator Login</h1>
-            <form action="#" method="POST">
+            <form action="/adminLogin" method="POST">
                 @csrf
                 <div class="mb-4">
                     <label for="student_id" class="block text-gray-700 text-sm font-medium mb-2">Admin ID</label>

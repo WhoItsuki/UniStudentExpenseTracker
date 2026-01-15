@@ -1,3 +1,9 @@
+@if(!session('admin_logged_in'))
+    <script>
+        window.location.href = '/loginAdmin';
+    </script>
+@endif
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,7 +35,12 @@
                         </ol>
                     </div>
                     <div class="flex items-center">
-                            <a href="#" class="text-red-600 hover:text-red-800"><i class="fas fa-sign-out-alt mr-1"></i>Logout</a>
+                            <form action="{{ route('admin.logout') }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="text-red-600 hover:text-red-800 border-none bg-transparent cursor-pointer">
+                                    <i class="fas fa-sign-out-alt mr-1"></i>Logout
+                                </button>
+                            </form>
                     </div>
                 </div>
             </div>
@@ -37,9 +48,31 @@
         <br><br>
         <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex flex-wrap">
             <div class="px-4 py-6 sm:px-0 w-full">
+                <!-- Messages -->
+                @if($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {{ session('error') }}
+                </div>
+            @endif
                 <div class="bg-white rounded-lg shadow p-6">
                     <h2 class="text-2xl font-bold text-gray-800 mb-4">Dashboard</h2>
-                    <p class="text-gray-600 mb-6">Welcome to your admin dashboard. This is where you can manage your students and financials.</p>
+                    <p class="text-gray-600 mb-6">Welcome back, {{ $admin->adminFName }} {{ $admin->adminLName }}! This is your admin dashboard where you can manage students and financial data.</p>
+
+                    
 
                     <!-- Global Filters -->
                     <div class="mb-8">

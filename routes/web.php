@@ -73,15 +73,19 @@ Route::middleware('student.auth')->group(function () {
 });
 
 
-//Routes admin navigation bar
-Route::get('/dashboardAdmin', function(){
-    return view('admin/dashboardAdmin');
+//Admin authentication routes
+Route::post('/adminLogin', [adminController::class, 'login']);
+Route::post('/adminLogout', [adminController::class, 'logout'])->name('admin.logout');
+
+//Routes admin navigation bar (protected by admin authentication)
+Route::middleware('admin.auth')->group(function () {
+    Route::get('/dashboardAdmin', [adminController::class, 'dashboard']);
+    Route::get('/profileAdmin', [adminController::class, 'profile']);
+    Route::post('/profileAdmin', [adminController::class, 'updateProfile'])->name('admin.updateProfile');
+    Route::get('/studentAdmin', [adminController::class, 'studentList']);
+    Route::get('/student/{studentID}', [adminController::class, 'studentDetail'])->name('admin.student.detail');
+    
 });
-Route::get('/profileAdmin', function(){
-    return view('admin/profileAdmin');
-});
-Route::get('/studentAdmin', [adminController::class, 'studentList']);
-Route::get('/admin/student/{studentID}/details', [adminController::class, 'getStudentDetails']);
 
 //Student function
 Route::post('studentSignup', [StudentController::class, 'signUp']);
