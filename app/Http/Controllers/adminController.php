@@ -53,7 +53,100 @@ class adminController extends Controller
         // Get the logged-in admin's data
         $admin = Admin::where('adminID', session('admin_id'))->first();
 
-        return view('admin/dashboardAdmin', compact('admin'));
+        // Get filter parameters
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+        $timeFrame = $request->get('time_frame', 'monthly');
+
+        // Get ALL students for analytics (average, highest, lowest spending across all students)
+        $allStudents = Student::with(['incomes', 'expenses.category'])->get();
+
+        // Calculate financial data for all students
+        foreach ($allStudents as $student) {
+            $totalIncome = $student->incomes->sum('incomeAmount');
+            $totalExpenses = $student->expenses->sum('expenseAmount');
+            $student->total_spending = $totalExpenses;
+            $student->current_balance = $totalIncome - $totalExpenses;
+        }
+
+        // Calculate analytics based on ALL students (always shows complete data)
+        $analytics = $this->calculateAnalytics($allStudents);
+
+        // Build query for filtered students (for the top 5 display)
+        $filteredStudentsQuery = Student::with(['incomes', 'expenses.category']);
+
+        // Apply date filters if provided for the top 5 students
+        if ($startDate && $endDate) {
+            $filteredStudentsQuery->whereHas('expenses', function($query) use ($startDate, $endDate) {
+                $query->whereBetween('expenseDate', [$startDate, $endDate]);
+            })->orWhereHas('incomes', function($query) use ($startDate, $endDate) {
+                $query->whereBetween('incomeDate', [$startDate, $endDate]);
+            });
+        }
+
+        $filteredStudents = $filteredStudentsQuery->get();
+
+        // Calculate financial data for filtered students
+        foreach ($filteredStudents as $student) {
+            $totalIncome = $student->incomes->sum('incomeAmount');
+            $totalExpenses = $student->expenses->sum('expenseAmount');
+            $student->total_spending = $totalExpenses;
+            $student->current_balance = $totalIncome - $totalExpenses;
+        }
+
+        // Get top 5 students by highest spending (from filtered results)
+        $topStudents = $filteredStudents->sortByDesc('total_spending')->take(5);
+
+        // If AJAX request, return JSON with filtered data but complete analytics
+        if ($request->ajax()) {
+            return response()->json([
+                'students' => $topStudents->values(),
+                'analytics' => $analytics // Always return complete analytics
+            ]);
+        }
+
+        return view('admin/dashboardAdmin', compact('admin', 'filteredStudents', 'topStudents', 'analytics'));
+    }
+
+    private function calculateAnalytics($students)
+    {
+        if ($students->isEmpty()) {
+            return [
+                'average' => 0,
+                'highest' => 0,
+                'lowest' => 0,
+                'average_student' => null,
+                'highest_student' => null,
+                'lowest_student' => null,
+            ];
+        }
+
+        $spendings = $students->pluck('total_spending')->filter()->values();
+        $average = $spendings->avg();
+        $highest = $spendings->max();
+        $lowest = $spendings->min();
+
+        // Find students with these values
+        $averageStudent = $students->first(function($student) use ($average) {
+            return abs($student->total_spending - $average) < 0.01;
+        });
+
+        $highestStudent = $students->first(function($student) use ($highest) {
+            return $student->total_spending == $highest;
+        });
+
+        $lowestStudent = $students->first(function($student) use ($lowest) {
+            return $student->total_spending == $lowest;
+        });
+
+        return [
+            'average' => round($average, 2),
+            'highest' => round($highest, 2),
+            'lowest' => round($lowest, 2),
+            'average_student' => $averageStudent,
+            'highest_student' => $highestStudent,
+            'lowest_student' => $lowestStudent,
+        ];
     }
 
     public function profile(Request $request)
