@@ -29,16 +29,10 @@ Route::get('/signupStudent', function () {
 
 //Routes student navigation bar (protected by student authentication)
 Route::middleware('student.auth')->group(function () {
-    Route::get('/dashboardStudent', function () {
-        return view('student/dashboardStudent');
-    });
+    Route::get('/dashboardStudent', [StudentController::class, 'dashboard']);
 
 
 
-    
-
-    Route::get('/income', [incomeController::class, 'viewIncomes']);
-    Route::get('/viewIncomes', [incomeController::class, 'viewIncomes']);
 
     Route::get('/profileStudent', [StudentController::class, 'profile']);
     Route::post('/profileStudent', [StudentController::class, 'updateProfile'])->name('student.updateProfile');
@@ -69,6 +63,12 @@ Route::middleware('student.auth')->group(function () {
     //Routes for income
     Route::post('/addIncome', [incomeController::class, 'addIncome']);
     Route::delete('/income/{incomeID}', [incomeController::class, 'deleteIncome']);
+    Route::get('/income', [incomeController::class, 'viewIncomes']);
+    Route::get('/viewIncomes', [incomeController::class, 'viewIncomes']);
+
+    // API Routes for filters
+    Route::get('/api/expenses-by-category/{period}', [StudentController::class, 'getExpensesByCategory']);
+    Route::get('/api/budget-vs-expense/{period}', [StudentController::class, 'getBudgetVsExpense']);
 
 });
 

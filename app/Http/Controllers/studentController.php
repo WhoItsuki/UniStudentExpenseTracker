@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\Expense;
+use App\Models\Income;
+use App\Models\Budget;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class studentController extends Controller
 {
@@ -110,5 +115,166 @@ class studentController extends Controller
         ]);
 
         return redirect('/profileStudent')->with('success', 'Profile updated successfully!');
+    }
+
+    /**
+     * Get date range based on period
+     */
+    private function getDateRange($period)
+    {
+        $now = Carbon::now();
+
+        switch ($period) {
+            case 'weekly':
+                // Current week: Monday to Sunday
+                return [
+                    'start' => $now->copy()->startOfWeek(Carbon::MONDAY),
+                    'end' => $now->copy()->endOfWeek(Carbon::SUNDAY)
+                ];
+            case 'monthly':
+                // Current month: 1st to last day of month
+                return [
+                    'start' => $now->copy()->startOfMonth(),
+                    'end' => $now->copy()->endOfMonth()
+                ];
+            case 'yearly':
+                // Current year: January 1st to December 31st
+                return [
+                    'start' => $now->copy()->startOfYear(),
+                    'end' => $now->copy()->endOfYear()
+                ];
+            default:
+                // Default to current month
+                return [
+                    'start' => $now->copy()->startOfMonth(),
+                    'end' => $now->copy()->endOfMonth()
+                ];
+        }
+    }
+
+    /**
+     * Get total expenses by category with period filter (API endpoint)
+     */
+    public function getExpensesByCategory(Request $request, $period = 'monthly')
+    {
+        // Validate period parameter
+        $validPeriods = ['weekly', 'monthly', 'yearly'];
+        if (!in_array($period, $validPeriods)) {
+            return response()->json(['error' => 'Invalid period. Must be weekly, monthly, or yearly.'], 400);
+        }
+
+        $studentID = session('student_id');
+        $dateRange = $this->getDateRange($period);
+
+        $expensesByCategory = Expense::where('studentID', $studentID)
+            ->whereBetween('expenseDate', [$dateRange['start'], $dateRange['end']])
+            ->with('category')
+            ->selectRaw('categoryID, SUM(expenseAmount) as total_amount')
+            ->groupBy('categoryID')
+            ->get()
+            ->map(function ($expense) {
+                return [
+                    'category_name' => $expense->category->categoryName,
+                    'total_amount' => $expense->total_amount
+                ];
+            });
+
+        return response()->json([
+            'period' => $period,
+            'date_range' => [
+                'start' => $dateRange['start']->format('Y-m-d'),
+                'end' => $dateRange['end']->format('Y-m-d')
+            ],
+            'data' => $expensesByCategory
+        ]);
+    }
+
+    /**
+     * Get budget vs expense comparison with period filter (API endpoint)
+     */
+    public function getBudgetVsExpense(Request $request, $period = 'monthly')
+    {
+        // Validate period parameter
+        $validPeriods = ['weekly', 'monthly', 'yearly'];
+        if (!in_array($period, $validPeriods)) {
+            return response()->json(['error' => 'Invalid period. Must be weekly, monthly, or yearly.'], 400);
+        }
+
+        $studentID = session('student_id');
+        $dateRange = $this->getDateRange($period);
+
+        $totalBudget = Budget::where('studentID', $studentID)
+            ->whereBetween('budgetDate', [$dateRange['start'], $dateRange['end']])
+            ->sum('budgetLimit');
+
+        $totalExpense = Expense::where('studentID', $studentID)
+            ->whereBetween('expenseDate', [$dateRange['start'], $dateRange['end']])
+            ->sum('expenseAmount');
+
+        return response()->json([
+            'period' => $period,
+            'date_range' => [
+                'start' => $dateRange['start']->format('Y-m-d'),
+                'end' => $dateRange['end']->format('Y-m-d')
+            ],
+            'data' => [
+                'total_budget' => $totalBudget,
+                'total_expense' => $totalExpense,
+                'remaining_budget' => $totalBudget - $totalExpense,
+                'budget_status' => $totalExpense > $totalBudget ? 'over_budget' : 'within_budget'
+            ]
+        ]);
+    }
+
+    public function dashboard()
+    {
+        $studentID = session('student_id');
+
+        // Get current month start and end dates
+        $currentMonthStart = Carbon::now()->startOfMonth();
+        $currentMonthEnd = Carbon::now()->endOfMonth();
+
+        // 1. Total expenses by category for current month
+        $expensesByCategory = Expense::where('studentID', $studentID)
+            ->whereBetween('expenseDate', [$currentMonthStart, $currentMonthEnd])
+            ->with('category')
+            ->selectRaw('categoryID, SUM(expenseAmount) as total_amount')
+            ->groupBy('categoryID')
+            ->get()
+            ->map(function ($expense) {
+                return [
+                    'category_name' => $expense->category->categoryName,
+                    'total_amount' => $expense->total_amount
+                ];
+            });
+
+        // 2. Current balance (Income - Expense) for current month
+        $totalIncome = Income::where('studentID', $studentID)
+            ->whereBetween('incomeDate', [$currentMonthStart, $currentMonthEnd])
+            ->sum('incomeAmount');
+
+        $totalExpense = Expense::where('studentID', $studentID)
+            ->whereBetween('expenseDate', [$currentMonthStart, $currentMonthEnd])
+            ->sum('expenseAmount');
+
+        $currentBalance = $totalIncome - $totalExpense;
+
+        // 3. Budget vs Expense comparison for current month (Total)
+        $totalBudget = Budget::where('studentID', $studentID)
+            ->whereBetween('budgetDate', [$currentMonthStart, $currentMonthEnd])
+            ->sum('budgetLimit');
+
+        $totalExpenseForBudget = Expense::where('studentID', $studentID)
+            ->whereBetween('expenseDate', [$currentMonthStart, $currentMonthEnd])
+            ->sum('expenseAmount');
+
+        return view('student.dashboardStudent', compact(
+            'expensesByCategory',
+            'totalIncome',
+            'totalExpense',
+            'currentBalance',
+            'totalBudget',
+            'totalExpenseForBudget'
+        ));
     }
 }

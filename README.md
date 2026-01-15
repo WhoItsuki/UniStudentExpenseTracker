@@ -57,3 +57,110 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+## UniStudentExpenseTracker Features
+
+### New Period-based Filter APIs
+
+Two new API endpoints have been added to filter expense data by different time periods:
+
+#### 1. Expenses by Category Filter
+**Endpoint:** `GET /api/expenses-by-category/{period}`
+
+**Parameters:**
+- `period`: `weekly`, `monthly`, or `yearly`
+
+**Date Ranges:**
+- `weekly`: Current week (Monday to Sunday)
+- `monthly`: Current month (1st to last day)
+- `yearly`: Current year (January 1st to December 31st)
+
+**Example Usage:**
+- `/api/expenses-by-category/weekly` - Get expenses by category for current week
+- `/api/expenses-by-category/monthly` - Get expenses by category for current month
+- `/api/expenses-by-category/yearly` - Get expenses by category for current year
+
+**Response Format:**
+```json
+{
+  "period": "monthly",
+  "date_range": {
+    "start": "2026-01-01",
+    "end": "2026-01-31"
+  },
+  "data": [
+    {
+      "category_name": "Food",
+      "total_amount": 150.50
+    },
+    {
+      "category_name": "Transport",
+      "total_amount": 75.25
+    }
+  ]
+}
+```
+
+#### 2. Budget vs Expense Comparison Filter
+**Endpoint:** `GET /api/budget-vs-expense/{period}`
+
+**Parameters:**
+- `period`: `weekly`, `monthly`, or `yearly`
+
+**Date Ranges:**
+- `weekly`: Current week (Monday to Sunday)
+- `monthly`: Current month (1st to last day)
+- `yearly`: Current year (January 1st to December 31st)
+
+**Example Usage:**
+- `/api/budget-vs-expense/weekly` - Get budget vs expense comparison for current week
+- `/api/budget-vs-expense/monthly` - Get budget vs expense comparison for current month
+- `/api/budget-vs-expense/yearly` - Get budget vs expense comparison for current year
+
+**Response Format:**
+```json
+{
+  "period": "monthly",
+  "date_range": {
+    "start": "2026-01-01",
+    "end": "2026-01-31"
+  },
+  "data": {
+    "total_budget": 1000.00,
+    "total_expense": 850.75,
+    "remaining_budget": 149.25,
+    "budget_status": "within_budget"
+  }
+}
+```
+
+### Implementation Details
+
+- **Authentication:** Both endpoints require student authentication (protected by `student.auth` middleware)
+- **Date Calculation:** Uses Carbon library for accurate period calculations
+- **Error Handling:** Returns 400 error for invalid period parameters
+- **Session Dependency:** Requires active student session to filter data by student ID
+
+### Usage in Frontend
+
+These endpoints can be called via AJAX to dynamically update charts and displays based on selected time periods.
+
+```javascript
+// Example AJAX call for expenses by category
+fetch('/api/expenses-by-category/monthly')
+  .then(response => response.json())
+  .then(data => {
+    // Update your charts with data.data
+    console.log('Expenses by category:', data);
+  });
+
+// Example AJAX call for budget vs expense
+fetch('/api/budget-vs-expense/monthly')
+  .then(response => response.json())
+  .then(data => {
+    // Update budget comparison display
+    console.log('Budget vs expense:', data);
+  });
+```
