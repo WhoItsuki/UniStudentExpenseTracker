@@ -1,88 +1,94 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# UniStudentExpenseTracker
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://img.shields.io/badge/PHP-%5E8.2-blue.svg" alt="PHP 8.2" />
+  <img src="https://img.shields.io/badge/Laravel-12.x-red.svg" alt="Laravel 12" />
+  <img src="https://img.shields.io/badge/Tailwind%20CSS-4.0.0-sky.svg" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License" />
+  <img src="https://img.shields.io/badge/Status-Active-brightgreen.svg" alt="Status Active" />
 </p>
 
-## About Laravel
+## Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+UniStudentExpenseTracker is a Laravel-based student expense management system that helps students track budgets, expenses, incomes, and categories while providing an admin interface for student management.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Key features include student authentication, expense and budget tracking, category management, income logging, and period-filtered analytics for expenses and budget comparisons.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Tech Stack
 
-## Learning Laravel
+- Laravel 12
+- PHP 8.2
+- Tailwind CSS 4
+- Vite
+- MySQL / SQLite compatible with Laravel migrations
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Features
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Student login, signup, profile, and logout
+- Admin login and student management dashboard
+- Expense creation, update, and deletion
+- Budget creation, update, and deletion
+- Category management (add, update, delete)
+- Income logging and delete support
+- Period-based analytics API for:
+  - Expenses by category
+  - Budget vs expense comparison
+- Protected routes via `student.auth` and `admin.auth` middleware
 
-## Laravel Sponsors
+## Installation
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm run build
+```
 
-### Premium Partners
+## Development
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+npm run dev
+php artisan serve
+```
 
-## Contributing
+## Authentication Routes
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Student login: `POST /studentLogin`
+- Student signup: `POST /studentSignup`
+- Student logout: `POST /studentLogout`
+- Admin login: `POST /adminLogin`
+- Admin logout: `POST /adminLogout`
 
-## Code of Conduct
+## Student Interface Routes
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- `/loginStudent` - Student login page
+- `/signupStudent` - Student signup page
+- `/dashboardStudent` - Student dashboard
+- `/profileStudent` - Student profile
+- `/category` - Category management
+- `/expense` - Expense management
+- `/budget` - Budget management
+- `/income` - Income management
 
-## Security Vulnerabilities
+## Admin Interface Routes
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- `/loginAdmin` - Admin login page
+- `/dashboardAdmin` - Admin dashboard
+- `/profileAdmin` - Admin profile
+- `/studentAdmin` - Student list
+- `/student/{studentID}` - Student detail view
 
-## License
+## API Endpoints
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Expenses by Category
 
----
+- `GET /api/expenses-by-category/{period}`
+- `period` values: `weekly`, `monthly`, `yearly`
 
-## UniStudentExpenseTracker Features
+Response example:
 
-### New Period-based Filter APIs
-
-Two new API endpoints have been added to filter expense data by different time periods:
-
-#### 1. Expenses by Category Filter
-**Endpoint:** `GET /api/expenses-by-category/{period}`
-
-**Parameters:**
-- `period`: `weekly`, `monthly`, or `yearly`
-
-**Date Ranges:**
-- `weekly`: Current week (Monday to Sunday)
-- `monthly`: Current month (1st to last day)
-- `yearly`: Current year (January 1st to December 31st)
-
-**Example Usage:**
-- `/api/expenses-by-category/weekly` - Get expenses by category for current week
-- `/api/expenses-by-category/monthly` - Get expenses by category for current month
-- `/api/expenses-by-category/yearly` - Get expenses by category for current year
-
-**Response Format:**
 ```json
 {
   "period": "monthly",
@@ -94,32 +100,18 @@ Two new API endpoints have been added to filter expense data by different time p
     {
       "category_name": "Food",
       "total_amount": 150.50
-    },
-    {
-      "category_name": "Transport",
-      "total_amount": 75.25
     }
   ]
 }
 ```
 
-#### 2. Budget vs Expense Comparison Filter
-**Endpoint:** `GET /api/budget-vs-expense/{period}`
+### Budget vs Expense
 
-**Parameters:**
-- `period`: `weekly`, `monthly`, or `yearly`
+- `GET /api/budget-vs-expense/{period}`
+- `period` values: `weekly`, `monthly`, `yearly`
 
-**Date Ranges:**
-- `weekly`: Current week (Monday to Sunday)
-- `monthly`: Current month (1st to last day)
-- `yearly`: Current year (January 1st to December 31st)
+Response example:
 
-**Example Usage:**
-- `/api/budget-vs-expense/weekly` - Get budget vs expense comparison for current week
-- `/api/budget-vs-expense/monthly` - Get budget vs expense comparison for current month
-- `/api/budget-vs-expense/yearly` - Get budget vs expense comparison for current year
-
-**Response Format:**
 ```json
 {
   "period": "monthly",
@@ -136,31 +128,26 @@ Two new API endpoints have been added to filter expense data by different time p
 }
 ```
 
-### Implementation Details
+## Notes
 
-- **Authentication:** Both endpoints require student authentication (protected by `student.auth` middleware)
-- **Date Calculation:** Uses Carbon library for accurate period calculations
-- **Error Handling:** Returns 400 error for invalid period parameters
-- **Session Dependency:** Requires active student session to filter data by student ID
+- Both API endpoints require a valid student session and are protected by `student.auth` middleware.
+- Invalid `period` values return a `400` response.
+- Period calculations use Carbon for weekly, monthly, and yearly date ranges.
 
-### Usage in Frontend
-
-These endpoints can be called via AJAX to dynamically update charts and displays based on selected time periods.
+## Frontend Integration Example
 
 ```javascript
-// Example AJAX call for expenses by category
-fetch('/api/expenses-by-category/monthly')
-  .then(response => response.json())
-  .then(data => {
-    // Update your charts with data.data
-    console.log('Expenses by category:', data);
-  });
+async function fetchExpensesByCategory(period) {
+  const response = await fetch(`/api/expenses-by-category/${period}`);
+  return response.json();
+}
 
-// Example AJAX call for budget vs expense
-fetch('/api/budget-vs-expense/monthly')
-  .then(response => response.json())
-  .then(data => {
-    // Update budget comparison display
-    console.log('Budget vs expense:', data);
-  });
+async function fetchBudgetVsExpense(period) {
+  const response = await fetch(`/api/budget-vs-expense/${period}`);
+  return response.json();
+}
 ```
+
+## License
+
+This project is licensed under the MIT License.
