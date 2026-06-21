@@ -27,6 +27,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
+                        <img src="{{ asset('logo_navbar.png') }}" alt="Logo" class="h-8 mr-3">
                         <h1 class="text-xl font-bold text-gray-800">Student Expense Tracker</h1>
                     </div>
                     <div class="flex items-center">
@@ -222,9 +223,8 @@
                                 </table>
                             </div>
                             <br>
-                            <h6>Total budgets : RM{{ number_format($totalBudgets ?? 0, 2) }}</h6>
-                        </div>
-
+                            <h6>Total budgets : RM{{ number_format($totalBudget ?? 0, 2) }}</h6>
+</div>
                         <div class="w-50 h-100 border-1 p-2 flex flex-column align-items-center rounded-2 hover:shadow-lg"> 
                             <h6>Add new budget</h6>
                             <form action="/addBudget" method="POST" class="flex flex-column w-75 px-5 py-2 gap-4">

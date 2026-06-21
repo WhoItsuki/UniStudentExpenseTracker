@@ -17,6 +17,7 @@
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen flex items-center justify-center flex-col">
+        <img src="{{ asset('logo_company.png') }}" alt="Company Logo" style="height: 200px;">
         <h1 class="">UniStudent Expense Tracker</h1><br>
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <h1 class="text-2xl font-bold text-center mb-6 text-gray-800"><i class="fas fa-user mr-2"></i>Student Login</h1>

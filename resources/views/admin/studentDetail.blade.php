@@ -26,6 +26,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
+                        <img src="{{ asset('logo_navbar.png') }}" alt="Logo" class="h-8 mr-3">
                         <h1 class="text-xl font-bold text-gray-800">Student Expense Tracker</h1>
                     </div>
                     <div class="flex items-center">
@@ -65,8 +66,15 @@
 
                 <!-- Student Information -->
                 <div class="mb-6">
-                    <h4 class="text-xl font-bold text-gray-800 mb-4">Student Information</h4>
-                    <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-xl font-bold text-gray-800">Student Information</h4>
+                        <button id="editBtn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-edit mr-2"></i>Edit Student Information
+                        </button>
+                    </div>
+
+                    <!-- Display Mode -->
+                    <div id="displayMode" class="bg-white rounded-lg shadow p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <p><strong>Student ID:</strong> {{ $student->studentID }}</p>
@@ -78,6 +86,89 @@
                                 <p><strong>Faculty:</strong> {{ $student->studentFaculty ?? 'N/A' }}</p>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Edit Mode -->
+                    <div id="editMode" class="bg-white rounded-lg shadow p-6 hidden">
+                        <form action="{{ route('admin.student.update', $student->studentID) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <!-- Success/Error Messages -->
+                            @if(session('success'))
+                                <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            @if($errors->any())
+                                <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+                                    <ul class="list-disc list-inside">
+                                        @foreach($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div class="mb-4">
+                                        <label for="studentID" class="block text-sm font-medium text-gray-700 mb-1">Student ID</label>
+                                        <input type="text" id="studentID" name="studentID" value="{{ old('studentID', $student->studentID) }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="studentFname" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                        <input type="text" id="studentFname" name="studentFname" value="{{ old('studentFname', $student->studentFname) }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="studentLname" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                        <input type="text" id="studentLname" name="studentLname" value="{{ old('studentLname', $student->studentLname) }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="mb-4">
+                                        <label for="studentEmail" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <input type="email" id="studentEmail" name="studentEmail" value="{{ old('studentEmail', $student->studentEmail) }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="studentFaculty" class="block text-sm font-medium text-gray-700 mb-1">Faculty</label>
+                                        <select id="studentFaculty" name="studentFaculty" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                            <option value="">Select Faculty</option>
+                                            <option value="Faculty of Computer Science" {{ old('studentFaculty', $student->studentFaculty) == 'Faculty of Computer Science' ? 'selected' : '' }}>Faculty of Computer Science</option>
+                                            <option value="Faculty of Engineering" {{ old('studentFaculty', $student->studentFaculty) == 'Faculty of Engineering' ? 'selected' : '' }}>Faculty of Engineering</option>
+                                            <option value="Faculty of Business" {{ old('studentFaculty', $student->studentFaculty) == 'Faculty of Business' ? 'selected' : '' }}>Faculty of Business</option>
+                                            <option value="Faculty of Science" {{ old('studentFaculty', $student->studentFaculty) == 'Faculty of Science' ? 'selected' : '' }}>Faculty of Science</option>
+                                            <option value="Faculty of Arts and Humanities" {{ old('studentFaculty', $student->studentFaculty) == 'Faculty of Arts and Humanities' ? 'selected' : '' }}>Faculty of Arts and Humanities</option>
+                                            <option value="Faculty of Medicine" {{ old('studentFaculty', $student->studentFaculty) == 'Faculty of Medicine' ? 'selected' : '' }}>Faculty of Medicine</option>
+                                            <option value="Faculty of Law" {{ old('studentFaculty', $student->studentFaculty) == 'Faculty of Law' ? 'selected' : '' }}>Faculty of Law</option>
+                                            <option value="Faculty of Education" {{ old('studentFaculty', $student->studentFaculty) == 'Faculty of Education' ? 'selected' : '' }}>Faculty of Education</option>
+                                            <option value="Faculty of Social Sciences" {{ old('studentFaculty', $student->studentFaculty) == 'Faculty of Social Sciences' ? 'selected' : '' }}>Faculty of Social Sciences</option>
+                                            <option value="Faculty of Design and Architecture" {{ old('studentFaculty', $student->studentFaculty) == 'Faculty of Design and Architecture' ? 'selected' : '' }}>Faculty of Design and Architecture</option>
+                                            <option value="Other" {{ old('studentFaculty', $student->studentFaculty) == 'Other' ? 'selected' : '' }}>Other</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="programme" class="block text-sm font-medium text-gray-700 mb-1">Programme</label>
+                                        <input type="text" id="programme" name="programme" value="{{ old('programme', $student->programme) }}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end space-x-3 mt-6">
+                                <button type="button" id="cancelBtn" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors">
+                                    <i class="fas fa-times mr-2"></i>Cancel
+                                </button>
+                                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                                    <i class="fas fa-save mr-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -248,6 +339,22 @@
             } catch (error) {
                 console.error('Error initializing charts:', error);
             }
+
+            // Student information edit toggle functionality
+            const editBtn = document.getElementById('editBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const displayMode = document.getElementById('displayMode');
+            const editMode = document.getElementById('editMode');
+
+            editBtn.addEventListener('click', function() {
+                displayMode.classList.add('hidden');
+                editMode.classList.remove('hidden');
+            });
+
+            cancelBtn.addEventListener('click', function() {
+                editMode.classList.add('hidden');
+                displayMode.classList.remove('hidden');
+            });
         });
     </script>
 </body>

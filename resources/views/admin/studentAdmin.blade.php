@@ -26,6 +26,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
+                        <img src="{{ asset('logo_navbar.png') }}" alt="Logo" class="h-8 mr-3">
                         <h1 class="text-xl font-bold text-gray-800">Student Expense Tracker</h1>
                     </div>
                     <div class="flex items-center">
@@ -75,12 +76,29 @@
                         </div>
                     @endif
 
+                    <!-- Bulk Delete Form -->
+                    <form id="bulkDeleteForm" action="{{ route('admin.students.delete.multiple') }}" method="POST" style="display: none;">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+
+                    <!-- Delete Selected Button -->
+                    <div id="bulkDeleteActions" class="mb-4" style="display: none;">
+                        <button type="button" id="deleteSelectedBtn" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors">
+                            <i class="fas fa-trash mr-2"></i>Delete Selected Students
+                        </button>
+                        <span id="selectedCount" class="ml-3 text-sm text-gray-600"></span>
+                    </div>
+
                     <!-- Student List Table -->
                     <div class="bg-gray-50 rounded-lg border-2 overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full table-auto border-collapse">
                                 <thead class="bg-gray-200">
                                     <tr>
+                                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b">
+                                            <input type="checkbox" id="selectAll" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                                        </th>
                                         <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Student ID</th>
                                         <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Name</th>
                                         <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Programme</th>
@@ -88,11 +106,15 @@
                                         <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700 border-b">Email</th>
                                         <th class="px-4 py-3 text-right text-sm font-semibold text-gray-700 border-b">Total Spending</th>
                                         <th class="px-4 py-3 text-right text-sm font-semibold text-gray-700 border-b">Current Balance</th>
+                                        <th class="px-4 py-3 text-center text-sm font-semibold text-gray-700 border-b">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($students ?? [] as $student)
-                                    <tr class="hover:bg-blue-50 hover:shadow-md transition-all duration-200 cursor-pointer border-b border-gray-200">
+                                    <tr class="hover:bg-blue-50 hover:shadow-md transition-all duration-200 border-b border-gray-200">
+                                        <td class="px-4 py-3 text-center text-sm text-gray-900 border-b">
+                                            <input type="checkbox" name="student_ids[]" value="{{ $student->studentID }}" class="student-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                                        </td>
                                         <td class="px-4 py-3 text-sm text-gray-900 border-b">
                                             <a href="{{ route('admin.student.detail', $student->studentID) }}" class="text-blue-600 hover:text-blue-800">{{ $student->studentID }}</a>
                                         </td>
@@ -104,10 +126,19 @@
                                         <td class="px-4 py-3 text-sm text-gray-900 border-b">{{ $student->studentEmail }}</td>
                                         <td class="px-4 py-3 text-sm text-right text-red-600 border-b font-semibold">RM{{ number_format($student->total_spending ?? 0, 2) }}</td>
                                         <td class="px-4 py-3 text-sm text-right {{ ($student->current_balance ?? 0) >= 0 ? 'text-green-600' : 'text-red-600' }} border-b font-semibold">RM{{ number_format($student->current_balance ?? 0, 2) }}</td>
+                                        <td class="px-4 py-3 text-center text-sm text-gray-900 border-b">
+                                            <form action="{{ route('admin.student.delete', $student->studentID) }}" method="POST" class="inline delete-form" onsubmit="return confirm('Are you sure you want to delete {{ $student->studentFname }} {{ $student->studentLname }} and all their financial data? This action cannot be undone.');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-800 p-1" title="Delete Student">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">No student data available</td>
+                                        <td colspan="9" class="px-4 py-8 text-center text-gray-500">No student data available</td>
                                     </tr>
                                     @endforelse
                                 </tbody>
@@ -119,6 +150,99 @@
         </main>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const studentCheckboxes = document.querySelectorAll('.student-checkbox');
+            const bulkDeleteActions = document.getElementById('bulkDeleteActions');
+            const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+            const selectedCount = document.getElementById('selectedCount');
+            const bulkDeleteForm = document.getElementById('bulkDeleteForm');
+
+            // Handle select all checkbox
+            selectAllCheckbox.addEventListener('change', function() {
+                const isChecked = this.checked;
+                studentCheckboxes.forEach(checkbox => {
+                    checkbox.checked = isChecked;
+                });
+                updateBulkDeleteUI();
+            });
+
+            // Handle individual checkboxes
+            studentCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateSelectAllState();
+                    updateBulkDeleteUI();
+                });
+            });
+
+            // Update select all checkbox state
+            function updateSelectAllState() {
+                const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
+                const totalBoxes = studentCheckboxes.length;
+
+                if (checkedBoxes.length === 0) {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = false;
+                } else if (checkedBoxes.length === totalBoxes) {
+                    selectAllCheckbox.checked = true;
+                    selectAllCheckbox.indeterminate = false;
+                } else {
+                    selectAllCheckbox.checked = false;
+                    selectAllCheckbox.indeterminate = true;
+                }
+            }
+
+            // Update bulk delete UI
+            function updateBulkDeleteUI() {
+                const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
+                const count = checkedBoxes.length;
+
+                if (count > 0) {
+                    bulkDeleteActions.style.display = 'block';
+                    selectedCount.textContent = `${count} student${count > 1 ? 's' : ''} selected`;
+                } else {
+                    bulkDeleteActions.style.display = 'none';
+                }
+            }
+
+            // Handle delete selected button
+            deleteSelectedBtn.addEventListener('click', function() {
+                const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
+                const count = checkedBoxes.length;
+
+                if (count === 0) {
+                    alert('Please select students to delete.');
+                    return;
+                }
+
+                const confirmed = confirm(`Are you sure you want to delete ${count} student${count > 1 ? 's' : ''} and all their financial data? This action cannot be undone.`);
+
+                if (confirmed) {
+                    // Add selected student IDs to the form
+                    checkedBoxes.forEach(checkbox => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'student_ids[]';
+                        input.value = checkbox.value;
+                        bulkDeleteForm.appendChild(input);
+                    });
+
+                    // Submit the form
+                    bulkDeleteForm.submit();
+                }
+            });
+
+            // Handle individual delete forms
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const button = this.querySelector('button[type="submit"]');
+                    button.disabled = true;
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                });
+            });
+        });
+    </script>
 
 </body>
 </html>

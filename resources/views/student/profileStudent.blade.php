@@ -24,7 +24,8 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <h1 class="text-xl font-bold text-gray-800"><i class="fas fa-graduation-cap mr-2"></i>Student Expense Tracker</h1>
+                        <img src="{{ asset('logo_navbar.png') }}" alt="Logo" class="h-8 mr-3">
+                        <h1 class="text-xl font-bold text-gray-800">Student Expense Tracker</h1>
                     </div>
                     <div class="flex items-center">
                         <ol class="flex items-center gap-20 list-none m-0 p-0">

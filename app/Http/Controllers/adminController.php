@@ -243,5 +243,91 @@ class adminController extends Controller
         ));
     }
 
- 
+    public function updateStudent(Request $request, $studentID)
+    {
+        // Validate the incoming data
+        $validatedData = $request->validate([
+            'studentFname' => 'required|string|max:255',
+            'studentLname' => 'required|string|max:255',
+            'studentEmail' => 'required|email|unique:students,studentEmail,' . $studentID . ',studentID',
+            'studentID' => 'required|string|max:255|unique:students,studentID,' . $studentID . ',studentID',
+            'studentFaculty' => 'required|string|max:255',
+            'programme' => 'required|string|max:255',
+        ]);
+
+        // Find the student
+        $student = Student::findOrFail($studentID);
+
+        // Update student data
+        $student->studentFname = $validatedData['studentFname'];
+        $student->studentLname = $validatedData['studentLname'];
+        $student->studentEmail = $validatedData['studentEmail'];
+        $student->studentID = $validatedData['studentID'];
+        $student->studentFaculty = $validatedData['studentFaculty'];
+        $student->programme = $validatedData['programme'];
+
+        $student->save();
+
+        return redirect()->route('admin.student.detail', $student->studentID)->with('success', 'Student information updated successfully!');
+    }
+
+    public function deleteStudent($studentID)
+    {
+        try {
+            // Find the student
+            $student = Student::findOrFail($studentID);
+
+            // Store student name for success message
+            $studentName = $student->studentFname . ' ' . $student->studentLname;
+
+            // Delete all related financial data first (due to foreign key constraints)
+            $student->incomes()->delete();     // Delete all incomes
+            $student->expenses()->delete();    // Delete all expenses
+            $student->budgets()->delete();     // Delete all budgets
+            $student->categories()->delete();  // Delete all categories
+
+            // Finally delete the student
+            $student->delete();
+
+            return redirect('/studentAdmin')->with('success', "Student {$studentName} and all associated financial data have been deleted successfully!");
+
+        } catch (\Exception $e) {
+            return redirect('/studentAdmin')->with('error', 'Failed to delete student. Please try again.');
+        }
+    }
+
+    public function deleteMultipleStudents(Request $request)
+    {
+        try {
+            $studentIDs = $request->input('student_ids', []);
+
+            if (empty($studentIDs)) {
+                return redirect('/studentAdmin')->with('error', 'No students selected for deletion.');
+            }
+
+            $deletedCount = 0;
+
+            foreach ($studentIDs as $studentID) {
+                $student = Student::find($studentID);
+                if ($student) {
+                    // Delete all related financial data first
+                    $student->incomes()->delete();
+                    $student->expenses()->delete();
+                    $student->budgets()->delete();
+                    $student->categories()->delete();
+
+                    // Delete the student
+                    $student->delete();
+                    $deletedCount++;
+                }
+            }
+
+            return redirect('/studentAdmin')->with('success', "{$deletedCount} student(s) and all associated financial data have been deleted successfully!");
+
+        } catch (\Exception $e) {
+            return redirect('/studentAdmin')->with('error', 'Failed to delete selected students. Please try again.');
+        }
+    }
+
+
 }

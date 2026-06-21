@@ -14,18 +14,27 @@ class studentController extends Controller
 {
     public function signUp(Request $request)
     {
-        //Validate the incoming data
-        $validatedData = $request->validate([
-            'studentFname' => 'required|string|max:255',
-            'studentLname' => 'required|string|max:255',
-            'programme' => 'required|string|max:255',
-            'studentFaculty' => 'required|string|max:255',
-            'studentEmail' => 'required|email|unique:students,studentEmail',
-            'studentID' => 'required|string|unique:students,studentID',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        try {
+            //Validate the incoming data
+            $validatedData = $request->validate([
+                'studentFname' => 'required|string|max:255',
+                'studentLname' => 'required|string|max:255',
+                'programme' => 'required|string|max:255',
+                'studentFaculty' => 'required|string|max:255',
+                'studentEmail' => 'required|email|unique:students,studentEmail',
+                'studentID' => 'required|string|unique:students,studentID',
+                'password' => 'required|string|min:8',
+            ]);
 
-        Student::create($validatedData);// Save the new student to the database
+            Student::create($validatedData);// Save the new student to the database
+
+            // Redirect to login page with success message
+            return redirect('/loginStudent')->with('success', 'Account created successfully! Please log in.');
+
+        } catch (\Exception $e) {
+            // Redirect back with error message
+            return redirect()->back()->with('error', 'Failed to create account. Please try again.')->withInput();
+        }
     }
 
     public function login(Request $request)

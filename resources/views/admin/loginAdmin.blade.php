@@ -15,7 +15,8 @@
     <title>Login</title>
 </head>
 <body class="bg-gray-100">
-    <div class="min-h-screen flex items-center justify-center">
+    <div class="min-h-screen flex items-center justify-center flex-col">
+                <img src="{{ asset('logo_company.png') }}" alt="Company Logo" style="height: 200px;">
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
             <h1 class="text-2xl font-bold text-center mb-6 text-gray-800"><i class="fas fa-shield-alt mr-2"></i>Administrator Login</h1>
             <form action="/adminLogin" method="POST">

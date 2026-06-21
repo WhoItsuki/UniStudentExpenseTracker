@@ -84,7 +84,10 @@ Route::middleware('admin.auth')->group(function () {
     Route::post('/profileAdmin', [adminController::class, 'updateProfile'])->name('admin.updateProfile');
     Route::get('/studentAdmin', [adminController::class, 'studentList']);
     Route::get('/student/{studentID}', [adminController::class, 'studentDetail'])->name('admin.student.detail');
-    
+    Route::put('/student/{studentID}', [adminController::class, 'updateStudent'])->name('admin.student.update');
+    Route::delete('/student/{studentID}', [adminController::class, 'deleteStudent'])->name('admin.student.delete');
+    Route::delete('/students/delete-multiple', [adminController::class, 'deleteMultipleStudents'])->name('admin.students.delete.multiple');
+
 });
 
 //Student function
